@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from apicall import apicall
+from FetchUserPref import apicall
 app = FastAPI()
 
 @app.get("/")
