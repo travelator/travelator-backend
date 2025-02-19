@@ -58,9 +58,7 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if session.get('user_id') is None:
             return redirect(url_for('main.login'))
-
         return view(**kwargs)
-
     return wrapped_view
 
 @main_bp.route('/logout')
