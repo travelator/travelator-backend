@@ -1,10 +1,10 @@
 import requests
-#from supabase import create_client
+from supabase import create_client
 
 LLM_API_URL ="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDv7vJSFv4BhSq1G9ykI5Ik3WOZ74xbYu4"
-#SUPABASE_URL = "https://your-supabase-url.supabase.co"
-#SUPABASE_KEY = "your-supabase-key"
-#supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+SUPABASE_URL = "https://your-supabase-url.supabase.co"
+SUPABASE_KEY = "your-supabase-key"
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def get_user_preferences(user_id):
     """Fetch user preferences from the database"""
