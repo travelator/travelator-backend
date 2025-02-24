@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
+from typing import List
 
 
 class Theme(str, Enum):
@@ -37,6 +38,14 @@ class Activity(BaseModel):
         description="Cost of the itinerary item, in GBP. If free, write 0."
     )
     theme: Theme = Field(description="Theme of the activity.")
+
+
+class ActivityTitles(BaseModel):
+    """Generates only titles of activities that could be part of an itinerary"""
+
+    activities: List[str] = Field(
+        description="List of titles of activities that could make for exciting activities in the given location"
+    )
 
 
 class ItineraryItem(BaseModel):

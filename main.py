@@ -10,7 +10,11 @@ generator = Generator()
 # Allow CORS for the React app's origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "https://voya-trips.com", "https://www.voya-trips.com"],  # React app's origin (adjust if needed)
+    allow_origins=[
+        "http://localhost:8080",
+        "https://voya-trips.com",
+        "https://www.voya-trips.com",
+    ],  # React app's origin (adjust if needed)
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, OPTIONS, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -21,13 +25,22 @@ app.add_middleware(
 def read_root():
     return {"message": "Travelator backend is running"}
 
+
 @app.post("/activities")
 def get_activities(request: ActivityRequest):
     city = request.city
     timeOfDay = request.timeOfDay
     group = request.group
 
-    activity_response = generator.generate_activities(city)
+    # Activity titles is a list of string representing different activity titles
+    activity_titles = generator.generate_activities(city, titles_only=True)
+
+    # TODO: Add image fetching based on titles
+
+    activity_response = generator.generate_activities(city, titles=activity_titles)
+
+    # TODO: update image_link for each activity
+
     return {"activities": activity_response}
 
 
