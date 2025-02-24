@@ -1,39 +1,46 @@
 from duckduckgo_search import DDGS
+from concurrent.futures import ThreadPoolExecutor
 
+def get_n_random_places(titles):
+    # unpack dict if necessary before this
+    keys = list(titles.keys())
+    values = list(titles.values())
+    final_data = search_duckduckgo_images(values, keys)
+    return final_data
 
-def get_10_random_places(preferences):
-    # convert json to list
+def search_single_image(query, key):
+    with DDGS() as ddgs:
+        results = ddgs.images(query, max_results=1)
+        if results:
+            return (key, results[0]['image'])
+        return (key, None)
 
-    # temp return for testing
-    return [
-        {"name": "Monmatre", "activity": "walking tour"},
-        {"name": "New York", "activity": "sightseeing"},
-        {"name": "London", "activity": "sightseeing"},
-        {"name": "Paris", "activity": "sightseeing"},
-        {"name": "Tokyo", "activity": "sightseeing"},
-    ]
-
-
-def build_query(places):
-    queries = [place["name"] + place["activity"] for place in places]
-    print(queries)
-    return queries
-
-
-def search_duckduckgo_images(queries):
-    results_list = []  # format is image and backup image
-
-    for query in queries:
-        with DDGS() as ddgs:
-            results = list(ddgs.images(query, max_results=2))
-            results_list.append(results)
-    return results_list
-
+def search_duckduckgo_images(queries, keys):
+    data = dict()
+    # Create a mapping between queries and their corresponding keys
+    query_key_map = {queries[i]: keys[i] for i in range(len(queries))}
+    
+    # Use ThreadPoolExecutor to run searches concurrently
+    with ThreadPoolExecutor(max_workers=min(10, len(queries))) as executor:
+        # Submit all search tasks
+        future_to_query = {
+            executor.submit(search_single_image, query, query_key_map[query]): query 
+            for query in queries
+        }
+        
+        # Process results as they complete
+        for future in future_to_query:
+            try:
+                key, image_url = future.result()
+                if image_url:
+                    data[key] = image_url
+            except Exception as e:
+                print(f"Error searching for image: {e}")
+    
+    return data
 
 # Example usage
 if __name__ == "__main__":
-    places = get_10_random_places("hello")
-    queries = build_query(places)
-    final_list = search_duckduckgo_images(queries)
-    for element in final_list:
-        print(element)
+    titles = {'1': 'Montmartre', '2': 'New York', '3': 'London', '4': 'Paris', '5': 'Tokyo'}
+    places = get_n_random_places(titles)
+    print(places)
