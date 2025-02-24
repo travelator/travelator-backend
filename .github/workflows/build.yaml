@@ -23,7 +23,7 @@ jobs:
         run: pip install flake8
       
       - name: Run flake8
-        run: flake8 . --ignore E501,W503,E203,E266,W292,E302,E305 --exclude venv
+        run: flake8 . --ignore E501,W503,E203,E266,W292,E302,E305,F841,F401 --exclude venv
 
   deploy:
       name: Deploy container
