@@ -22,7 +22,10 @@ class Generator:
             structured_model = self.llm.with_structured_output(ActivityList)
 
         if titles is not None:
-            human_prompt = f"Generate full details for the following activities: {', '.join(titles)}"
+            activity_str = "\n".join(
+                [f"id: {i['id']}, title: {i['title']}" for i in titles]
+            )
+            human_prompt = f"Generate full details for the following activities, and stick to the given IDs: {activity_str}"
         else:
             human_prompt = f"Generate {num_activities} activities that could make for an interesting activity in the following location: {location}."
 
@@ -59,10 +62,10 @@ class Generator:
         return response.model_dump()["itinerary"]
 
 
-"""start = time.time()
+start = time.time()
 
 generator = Generator()
 
 print(generator.generate_activities("London"))
 
-print(f"Model took {time.time() - start} seconds to run.")"""
+print(f"Model took {time.time() - start} seconds to run.")

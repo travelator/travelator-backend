@@ -30,7 +30,9 @@ class TransportMode(str, Enum):
 class Activity(BaseModel):
     """An activity that could be part of an itinerary"""
 
-    id: int = Field(description="Unique identifier for the activity.")
+    id: int = Field(
+        description="Unique identifier for the activity. If one is provided you must keep the original ID"
+    )
     title: str = Field(description="Title of the activity.")
     description: str = Field(description="Detailed description of the activity.")
     image_link: str = Field(description="URL to an image representing the activity.")
@@ -40,10 +42,17 @@ class Activity(BaseModel):
     theme: Theme = Field(description="Theme of the activity.")
 
 
+class ActivityTitleStruct(BaseModel):
+    """Activity title and id"""
+
+    title: str = Field(description="Title of the activity")
+    id: int = Field(description="Unique id for the activity")
+
+
 class ActivityTitles(BaseModel):
     """Generates only titles of activities that could be part of an itinerary"""
 
-    activities: List[str] = Field(
+    activities: List[ActivityTitleStruct] = Field(
         description="List of titles of activities that could make for exciting activities in the given location"
     )
 
