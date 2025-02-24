@@ -4,6 +4,7 @@ from generation import Generator
 from request_models import ActivityRequest, ItineraryRequest
 from fastapi.middleware.cors import CORSMiddleware
 from image_searcher import get_n_random_places
+import os
 
 app = FastAPI()
 generator = Generator()
@@ -15,6 +16,7 @@ app.add_middleware(
         "http://localhost:8080",
         "https://voya-trips.com",
         "https://www.voya-trips.com",
+        os.getenv("DATABASE_API_URL"),
     ],  # React app's origin (adjust if needed)
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, OPTIONS, etc.)
