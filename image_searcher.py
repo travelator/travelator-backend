@@ -2,9 +2,7 @@ from duckduckgo_search import DDGS
 
 
 def get_10_random_places(preferences):
-    # evaluate the preferences
-    # return a 10 random place names, activity types from db
-    pass
+    # convert json to list
 
     # temp return for testing
     return [
@@ -18,6 +16,7 @@ def get_10_random_places(preferences):
 
 def build_query(places):
     queries = [place["name"] + place["activity"] for place in places]
+    print(queries)
     return queries
 
 

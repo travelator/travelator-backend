@@ -1,70 +1,75 @@
 import requests
-from supabase import create_client
+from dotenv import load_dotenv
+import os
 
-LLM_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDv7vJSFv4BhSq1G9ykI5Ik3WOZ74xbYu4"
-SUPABASE_URL = "https://your-supabase-url.supabase.co"
-SUPABASE_KEY = "your-supabase-key"
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+load_dotenv()
 
 
-def get_user_preferences(user_id):
-    """Fetch user preferences from the database"""
-    response = (
-        supabase.table("preferences").select("*").eq("user_id", user_id).execute()
-    )
-    if response.data:
-        return response.data[0]  # Return first match
-    return None
+def format_query(true_data, false_data, preferences):
+    """Format user data into a structured query for the LLM"""
 
+    # Convert lists to comma-separated strings
+    true_string = ", ".join(true_data) if true_data else "nothing specific"
+    false_string = ", ".join(false_data) if false_data else "nothing specific"
 
-def format_query(user_data):
-    "Format user data into a structured query for the LLM"
-    preferred_activities = ",".join(
-        [k for k, v in user_data["preferences"].items() if v == 1]
-    )
+    # Extract user preferences with default values
+    trip_duration = preferences.get("trip_duration", "unspecified duration")
+    location = preferences.get("location", "an unspecified location")
+    budget = preferences.get("budget", "an unspecified budget")
 
     query_text = (
-        f"Generate a {user_data['trip_duration']} travel itinerary for {user_data['location']}"
-        f" with a {user_data['budget']} budget. The user prefers {preferred_activities}. "
-        f"Consider weather condition and real-time events"
+        f"Generate a {trip_duration} travel itinerary for {location} "
+        f"with a {budget} budget."
+        f"The user liked: {true_string}."
+        f"The user disliked: {false_string}."
+        f"Consider weather conditions and real-time events. "
+        f"Restrict the response to 5 activities per day in JSON format with time, location, and cost of each activity."
     )
+
     return query_text
 
 
 def send_query_to_LLM(query_text):
     """Send query to LLM"""
-    LLM_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-    API_KEY = "AIzaSyDv7vJSFv4BhSq1G9ykI5Ik3WOZ74xbYu4"
+    API_KEY = os.getenv("GEMINI_API_KEY")
+    LLM_API_URL = os.getenv("LLM_API_URL")
+    if not API_KEY:
+        raise ValueError(
+            "Missing API key. Set GEMINI_API_KEY in environment variables."
+        )
 
     url = f"{LLM_API_URL}?key={API_KEY}"
-
     payload = {"contents": [{"parts": [{"text": query_text}]}]}
 
     response = requests.post(url, json=payload)
-    return response.json() if response.status_code == 200 else None
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error {response.status_code}: {response.text}")
+        return None
+
+
+def get_prompt(choices, preferences):
+    """Generate a query and fetch response from LLM"""
+    true_data = choices.get("true", [])
+    false_data = choices.get("false", [])
+
+    if not (true_data or false_data):
+        return "Error: No user preferences provided."
+
+    query = format_query(true_data, false_data, preferences)
+    response = send_query_to_LLM(query)
+
+    return response or "Error retrieving response."
 
 
 if __name__ == "__main__":
-    user_data = {
-        "trip_duration": "2 days",
-        "location": "London",
-        "budget": "£1000",
-        "preferences": {
-            "shopping": 1,
-            "sightseeing": 1,
-            "dining": 1,
-            "preferences": {"shopping": 1, "sightseeing": 1, "dining": 1},
-        },
+    choices = {
+        "true": ["big ben", "hyde park", "london eye"],
+        "false": ["london bridge", "tower of london"],
     }
-    preferred_activities = ",".join(
-        [k for k, v in user_data["preferences"].items() if v == 1]
-    )
+    preferences = {"location": "london", "budget": "£1000", "trip_duration": "2 days"}
 
-    query_text = (
-        f"Generate a {user_data['trip_duration']} travel itinerary for {user_data['location']}"
-        f" with a {user_data['budget']} budget. The user prefers {preferred_activities}. "
-        f"Consider weather condition and real-time events and restrict the returned response to 5 activities per day and in JSON format with the time, location and cost of the activity listed"
-    )
-
-    response = send_query_to_LLM(query_text)
-    print(response)
+    r = get_prompt(choices, preferences)
+    print(r)
