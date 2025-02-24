@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from generation import Generator
 from request_models import ActivityRequest, ItineraryRequest
 from fastapi.middleware.cors import CORSMiddleware
+from image_searcher import get_n_random_places
 
 app = FastAPI()
 generator = Generator()
@@ -35,7 +36,7 @@ def get_activities(request: ActivityRequest):
     # Activity titles is a list of string representing different activity titles
     activity_titles = generator.generate_activities(city, titles_only=True)
 
-    # TODO: Add image fetching based on titles
+    get_n_random_places(activity_titles)
 
     activity_response = generator.generate_activities(city, titles=activity_titles)
 
