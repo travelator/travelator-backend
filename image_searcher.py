@@ -2,9 +2,8 @@ from duckduckgo_search import DDGS
 
 
 def get_10_random_places(preferences):
-    
     # convert json to list
-    
+
     # temp return for testing
     return [
         {"name": "Monmatre", "activity": "walking tour"},
