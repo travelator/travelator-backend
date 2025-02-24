@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
-#from FetchUserPref import apicall
+
+# from FetchUserPref import apicall
 
 app = FastAPI()
 
@@ -11,5 +12,5 @@ def read_root():
 
 
 if __name__ == "__main__":
-    #apicall()
+    # apicall()
     uvicorn.run(app, host="0.0.0.0", port=8000)
