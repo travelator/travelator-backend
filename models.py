@@ -20,15 +20,17 @@ llm = OpenAI(api_key=OPENAI_API_KEY)
 # Database setup
 engine = db.create_engine("sqlite:///database.db")  # Using SQLite for simplicity
 metadata = db.MetaData()
-activities_table = db.Table('activities', metadata,
-                            db.Column('id', db.Integer, primary_key=True),
-                            db.Column('city', db.String(100)),
-                            db.Column('name', db.String(200)),
-                            db.Column('description', db.Text),
-                            db.Column('price', db.String(10)),
-                            db.Column('category', db.String(50)),
-                            db.Column('time_of_day', db.String(20))
-                            )
+activities_table = db.Table(
+    "activities",
+    metadata,
+    db.Column("id", db.Integer, primary_key=True),
+    db.Column("city", db.String(100)),
+    db.Column("name", db.String(200)),
+    db.Column("description", db.Text),
+    db.Column("price", db.String(10)),
+    db.Column("category", db.String(50)),
+    db.Column("time_of_day", db.String(20)),
+)
 metadata.create_all(engine)
 
 

@@ -12,11 +12,26 @@ llm = OpenAI(api_key=OPENAI_API_KEY)
 
 # Predefined list of popular cities
 CITIES = [
-    "London (United Kingdom)", "New York (United States)", "Paris (France)", "Tokyo (Japan)",
-    "Los Angeles (United States)", "Berlin (Germany)", "Toronto (Canada)", "Sydney (Australia)",
-    "Madrid (Spain)", "Rome (Italy)", "Chicago (United States)", "Dubai (UAE)", "Hong Kong (China)",
-    "Singapore (Singapore)", "Bangkok (Thailand)", "Amsterdam (Netherlands)", "Istanbul (Turkey)",
-    "Seoul (South Korea)", "San Francisco (United States)", "Barcelona (Spain)"
+    "London (United Kingdom)",
+    "New York (United States)",
+    "Paris (France)",
+    "Tokyo (Japan)",
+    "Los Angeles (United States)",
+    "Berlin (Germany)",
+    "Toronto (Canada)",
+    "Sydney (Australia)",
+    "Madrid (Spain)",
+    "Rome (Italy)",
+    "Chicago (United States)",
+    "Dubai (UAE)",
+    "Hong Kong (China)",
+    "Singapore (Singapore)",
+    "Bangkok (Thailand)",
+    "Amsterdam (Netherlands)",
+    "Istanbul (Turkey)",
+    "Seoul (South Korea)",
+    "San Francisco (United States)",
+    "Barcelona (Spain)",
 ]
 
 
@@ -121,7 +136,9 @@ def handle_user_selection():
     if activities:
         liked_activities = []
         for activity in activities:
-            print(f"🏛 {activity['name']} | {activity['price']} | {activity['category']}")
+            print(
+                f"🏛 {activity['name']} | {activity['price']} | {activity['category']}"
+            )
             print(f"   📖 {activity['description']}")
             print(f"   ⏰ Best time: {activity['time_of_day']}")
             print("-" * 60)
@@ -143,9 +160,13 @@ def handle_user_selection():
                 for place in itinerary:
                     print(f"🏛 {place['name']}")
                     print(f"   📖 {place['description']}")
-                    print(f"   ⏰ Start time: {place['start_time']} | Duration: {place['duration']}")
-                    print(f"   🔗 Booking: {'Yes' if place['booking_required'] else 'No'}")
-                    if place['booking_required']:
+                    print(
+                        f"   ⏰ Start time: {place['start_time']} | Duration: {place['duration']}"
+                    )
+                    print(
+                        f"   🔗 Booking: {'Yes' if place['booking_required'] else 'No'}"
+                    )
+                    if place["booking_required"]:
                         print(f"   👉 {place['booking_link']}")
                     print("-" * 60)
             else:
