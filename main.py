@@ -35,12 +35,14 @@ def get_activities(request: ActivityRequest):
 
     # Activity titles is a list of string representing different activity titles
     activity_titles = generator.generate_activities(city, titles_only=True)
+    titles_dict = {item["id"]: item["title"] for item in activity_titles}
 
-    get_n_random_places(activity_titles)
+    image_dict = get_n_random_places(titles_dict)
 
     activity_response = generator.generate_activities(city, titles=activity_titles)
 
-    # TODO: update image_link for each activity
+    for item in activity_response:
+        item["image_link"] = image_dict[item["id"]]
 
     return {"activities": activity_response}
 
