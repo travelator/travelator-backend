@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_691a9ce8876bd239cb35b8f7385eee34 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.66.2/L.Control.Locate.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.66.2/L.Control.Locate.min.css"/>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_691a9ce8876bd239cb35b8f7385eee34" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_691a9ce8876bd239cb35b8f7385eee34 = L.map(
+                "map_691a9ce8876bd239cb35b8f7385eee34",
+                {
+                    center: [40.785091, -73.968285],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_f8c86666193c54adace242d06fc90f2c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_f8c86666193c54adace242d06fc90f2c.addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var marker_1629e555761e362b30145943329a1451 = L.marker(
+                [40.785091, -73.968285],
+                {
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var icon_39a028ebc80b6383b9f9306d17de99d2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_1629e555761e362b30145943329a1451.setIcon(icon_39a028ebc80b6383b9f9306d17de99d2);
+        
+    
+        var popup_14cfdb687d1b575dd660cbc677981066 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9cf65b809ec7edfaa78f67362b0b165f = $(`<div id="html_9cf65b809ec7edfaa78f67362b0b165f" style="width: 100.0%; height: 100.0%;"><b>Central Park</b><br>A large urban park with scenic spots.</div>`)[0];
+                popup_14cfdb687d1b575dd660cbc677981066.setContent(html_9cf65b809ec7edfaa78f67362b0b165f);
+            
+        
+
+        marker_1629e555761e362b30145943329a1451.bindPopup(popup_14cfdb687d1b575dd660cbc677981066)
+        ;
+
+        
+    
+    
+            marker_1629e555761e362b30145943329a1451.bindTooltip(
+                `<div>
+                     Central Park
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_894cb68c0f31c48ecd771b712974f0ce = L.marker(
+                [40.748817, -73.985428],
+                {
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var icon_96a4be11b35776e97aea3c7be8a6bda8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_894cb68c0f31c48ecd771b712974f0ce.setIcon(icon_96a4be11b35776e97aea3c7be8a6bda8);
+        
+    
+        var popup_32436c2e8413b048b0ebcb0bb365c84d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_66fe29e13f663647cad04d9e9e6284d6 = $(`<div id="html_66fe29e13f663647cad04d9e9e6284d6" style="width: 100.0%; height: 100.0%;"><b>Empire State Building</b><br>Iconic skyscraper with panoramic views.</div>`)[0];
+                popup_32436c2e8413b048b0ebcb0bb365c84d.setContent(html_66fe29e13f663647cad04d9e9e6284d6);
+            
+        
+
+        marker_894cb68c0f31c48ecd771b712974f0ce.bindPopup(popup_32436c2e8413b048b0ebcb0bb365c84d)
+        ;
+
+        
+    
+    
+            marker_894cb68c0f31c48ecd771b712974f0ce.bindTooltip(
+                `<div>
+                     Empire State Building
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_6fc4943f5a51600a4a2cb0d67b14a1ca = L.marker(
+                [40.758896, -73.98513],
+                {
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var icon_bb7be8ffc56a23293c3718f0715cbcaf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_6fc4943f5a51600a4a2cb0d67b14a1ca.setIcon(icon_bb7be8ffc56a23293c3718f0715cbcaf);
+        
+    
+        var popup_694a09c2650757c3a8ee161601330dc9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0c078176fbe4668b828cc063fcce5c02 = $(`<div id="html_0c078176fbe4668b828cc063fcce5c02" style="width: 100.0%; height: 100.0%;"><b>Times Square</b><br>Lively commercial and entertainment hub.</div>`)[0];
+                popup_694a09c2650757c3a8ee161601330dc9.setContent(html_0c078176fbe4668b828cc063fcce5c02);
+            
+        
+
+        marker_6fc4943f5a51600a4a2cb0d67b14a1ca.bindPopup(popup_694a09c2650757c3a8ee161601330dc9)
+        ;
+
+        
+    
+    
+            marker_6fc4943f5a51600a4a2cb0d67b14a1ca.bindTooltip(
+                `<div>
+                     Times Square
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_73d256b4a8ddd191e0cfc53f04eafcde = L.marker(
+                [40.706086, -73.996864],
+                {
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var icon_a6fcdf2630aefea69fe6dae767bf1642 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_73d256b4a8ddd191e0cfc53f04eafcde.setIcon(icon_a6fcdf2630aefea69fe6dae767bf1642);
+        
+    
+        var popup_6737be2855889800bdd113f7b3929365 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_979d107d04b885f7e079b537416efbb1 = $(`<div id="html_979d107d04b885f7e079b537416efbb1" style="width: 100.0%; height: 100.0%;"><b>Brooklyn Bridge</b><br>Famous suspension bridge connecting Manhattan and Brooklyn.</div>`)[0];
+                popup_6737be2855889800bdd113f7b3929365.setContent(html_979d107d04b885f7e079b537416efbb1);
+            
+        
+
+        marker_73d256b4a8ddd191e0cfc53f04eafcde.bindPopup(popup_6737be2855889800bdd113f7b3929365)
+        ;
+
+        
+    
+    
+            marker_73d256b4a8ddd191e0cfc53f04eafcde.bindTooltip(
+                `<div>
+                     Brooklyn Bridge
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_422b49f0f78afc926e5b9a1fe47f0d5e = L.marker(
+                [40.689247, -74.044502],
+                {
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var icon_698aed4c21eaae2b98665d8f8a86fbe8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_422b49f0f78afc926e5b9a1fe47f0d5e.setIcon(icon_698aed4c21eaae2b98665d8f8a86fbe8);
+        
+    
+        var popup_ee85efae97e3d2a4da0accf5a2eeb863 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cb3d485a53623373f799154f6bdd95ac = $(`<div id="html_cb3d485a53623373f799154f6bdd95ac" style="width: 100.0%; height: 100.0%;"><b>Statue of Liberty</b><br>Symbol of freedom and democracy.</div>`)[0];
+                popup_ee85efae97e3d2a4da0accf5a2eeb863.setContent(html_cb3d485a53623373f799154f6bdd95ac);
+            
+        
+
+        marker_422b49f0f78afc926e5b9a1fe47f0d5e.bindPopup(popup_ee85efae97e3d2a4da0accf5a2eeb863)
+        ;
+
+        
+    
+    
+            marker_422b49f0f78afc926e5b9a1fe47f0d5e.bindTooltip(
+                `<div>
+                     Statue of Liberty
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_5b3b072a887b82c3a9e6a4b08a76efa2 = L.polyline(
+                [[40.785091, -73.968285], [40.748817, -73.985428], [40.758896, -73.98513], [40.706086, -73.996864], [40.689247, -74.044502]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topleft",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+        
+    
+            var locate_control_b265b0f7021a70b0525aaec7ce159640 = L.control.locate(
+                {}
+            ).addTo(map_691a9ce8876bd239cb35b8f7385eee34);
+            
+        
+</script>
+</html>
