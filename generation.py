@@ -61,11 +61,11 @@ class Generator:
 
         return response.model_dump()["itinerary"]
 
-
+"""
 start = time.time()
 
 generator = Generator()
 
 print(generator.generate_activities("London"))
 
-print(f"Model took {time.time() - start} seconds to run.")
+print(f"Model took {time.time() - start} seconds to run.")"""
