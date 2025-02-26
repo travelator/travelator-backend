@@ -12,9 +12,9 @@ def get_n_random_places(titles):
 
 def search_single_image(query, key):
     with DDGS() as ddgs:
-        results = ddgs.images(query, max_results=1)
+        results = ddgs.images(query, max_results=2)
         if results:
-            return (key, results[0]["image"])
+            return (key, [results[0]["image"], results[1]["image"]])
         return (key, None)
 
 
@@ -53,4 +53,5 @@ if __name__ == "__main__":
         "5": "Tokyo",
     }
     places = get_n_random_places(titles)
-    print(places)
+    for val in places.values():
+        print(val, '\n')
