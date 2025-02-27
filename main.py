@@ -58,12 +58,13 @@ def get_activities(request: ActivityRequest, response: Response):
 
     # Activity titles is a list of string representing different activity titles
     activity_titles = generator.generate_activities(city, titles_only=True)
-    titles_dict = {item["id"]: item["title"] for item in activity_titles}
-
-    image_dict = get_n_random_places(titles_dict)
-
     activity_response = generator.generate_activities(city, titles=activity_titles)
 
+    # get images
+    titles_dict = {item["id"]: item["title"] for item in activity_titles}
+    image_dict = get_n_random_places(titles_dict)
+
+    # update images in response
     for item in activity_response:
         item["image_link"] = image_dict.get(item["id"], [])
 
@@ -71,7 +72,7 @@ def get_activities(request: ActivityRequest, response: Response):
 
 
 @app.post("/itinerary")
-def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(None)):
+async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(None)):
     city = request.city
 
     if searchConfig:
@@ -80,11 +81,21 @@ def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(None)):
         except:
             cookie_data = {}
             print("cookie could not be parsed")
-        timeOfDay = cookie_data.get("city", None)
+        timeOfDay = cookie_data.get("timeOfDay", None)
         group = cookie_data.get("group", None)
 
-    itinerary_response = generator.generate_itinerary(city)
-    return {"itinerary": itinerary_response}
+    itinerary_response = generator.generate_itinerary(city, timeOfDay, group)
+    detailed_itinerary = await generator.generate_itinerary_details(itinerary_response, city, group)
+
+    # get images
+    titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
+    image_dict = get_n_random_places(titles_dict)
+
+    # update images in response
+    for item in detailed_itinerary:
+        item["image_link"] = image_dict.get(item["id"], [])
+
+    return {"itinerary": detailed_itinerary}
 
 
 if __name__ == "__main__":

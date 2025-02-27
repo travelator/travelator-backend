@@ -80,8 +80,20 @@ class ItineraryItem(BaseModel):
         description="Indicates if the item requires booking."
     )
     booking_url: str = Field(description="URL for booking the itinerary item.")
-    image: str = Field(description="URL to an image representing the itinerary item.")
+    image_link: List[str] = Field(
+        description="URLs of images representing the activity. Do not generate."
+    )
     duration: int = Field(description="Duration of the itinerary item in minutes.")
+    id: int = Field(description="Unique identifier for the itinerary item.")
+
+class SimpleItineraryItem(BaseModel):
+    """An entry for a simplified itinerary item"""
+    title: str = Field(description="Title of the itinerary item.")
+    imageTag: str = Field(
+        description="A search term to find a relevant image tag for the given activity or location."
+    )
+    start: str = Field(description="Start time of the itinerary item.")
+    end: str = Field(description="End time of the itinerary item.")
     id: int = Field(description="Unique identifier for the itinerary item.")
 
 
@@ -91,5 +103,10 @@ class ActivityList(BaseModel):
 
 class FullItinerary(BaseModel):
     itinerary: list[ItineraryItem] = Field(
+        description="A full day itinerary for the given location"
+    )
+
+class ItinerarySummary(BaseModel):
+    itinerary: list[SimpleItineraryItem] = Field(
         description="A full day itinerary for the given location"
     )
