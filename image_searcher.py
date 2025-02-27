@@ -54,4 +54,4 @@ if __name__ == "__main__":
     }
     places = get_n_random_places(titles)
     for val in places.values():
-        print(val, '\n')
+        print(val, "\n")

@@ -1,7 +1,5 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from pydantic import BaseModel
-
 from dotenv import load_dotenv
 from generation_models import ActivityList, FullItinerary, ActivityTitles
 import time
@@ -60,6 +58,7 @@ class Generator:
         response = structured_model.invoke(messages)
 
         return response.model_dump()["itinerary"]
+
 
 """
 start = time.time()

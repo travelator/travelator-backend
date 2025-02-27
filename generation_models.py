@@ -35,7 +35,9 @@ class Activity(BaseModel):
     )
     title: str = Field(description="Title of the activity.")
     description: str = Field(description="Detailed description of the activity.")
-    image_link: List[str] = Field(description="URLs of images representing the activity. Do not generate.")
+    image_link: List[str] = Field(
+        description="URLs of images representing the activity. Do not generate."
+    )
     price: float = Field(
         description="Cost of the itinerary item, in GBP. If free, write 0."
     )

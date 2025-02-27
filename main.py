@@ -1,15 +1,19 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, Cookie
 from generation import Generator
 from request_models import ActivityRequest, ItineraryRequest
 from fastapi.middleware.cors import CORSMiddleware
 from image_searcher import get_n_random_places
+from datetime import timedelta
+import json
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
 app = FastAPI()
 generator = Generator()
+environment = os.getenv("environment", "dev")
 
 # Allow CORS for the React app's origin
 app.add_middleware(
@@ -25,6 +29,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# https security
+https_security = True if environment == "prod" else False
+
 
 @app.get("/")
 def read_root():
@@ -32,10 +39,22 @@ def read_root():
 
 
 @app.post("/activities")
-def get_activities(request: ActivityRequest):
+def get_activities(request: ActivityRequest, response: Response):
     city = request.city
     timeOfDay = request.timeOfDay
     group = request.group
+
+    # get user preferences for setting cookie
+    userPreferences = json.dumps(request.model_dump())
+
+    # set cookie with parameters
+    response.set_cookie(
+        key="searchConfig",  # Cookie name
+        value=userPreferences,  # JSON string value
+        max_age=timedelta(days=1),  # Cookie expiration
+        httponly=False,  # Prevent JS access
+        secure=https_security,
+    )
 
     # Activity titles is a list of string representing different activity titles
     activity_titles = generator.generate_activities(city, titles_only=True)
@@ -46,14 +65,23 @@ def get_activities(request: ActivityRequest):
     activity_response = generator.generate_activities(city, titles=activity_titles)
 
     for item in activity_response:
-        item["image_link"] = image_dict[item["id"]]
+        item["image_link"] = image_dict.get(item["id"], [])
 
     return {"activities": activity_response}
 
 
 @app.post("/itinerary")
-def get_itinerary(request: ItineraryRequest):
+def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(None)):
     city = request.city
+
+    if searchConfig:
+        try:
+            cookie_data = json.loads(searchConfig)
+        except:
+            cookie_data = {}
+            print("cookie could not be parsed")
+        timeOfDay = cookie_data.get("city", None)
+        group = cookie_data.get("group", None)
 
     itinerary_response = generator.generate_itinerary(city)
     return {"itinerary": itinerary_response}
