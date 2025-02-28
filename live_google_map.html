@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_7264a7ac58de15564a4be42494530598 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_7264a7ac58de15564a4be42494530598" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_7264a7ac58de15564a4be42494530598 = L.map(
+                "map_7264a7ac58de15564a4be42494530598",
+                {
+                    center: [40.748817, -73.985428],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_d85359b7f9630e79b950163c3abde5ec = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d85359b7f9630e79b950163c3abde5ec.addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_51c4be4c4f8d3acf750080d5c9766838 = L.marker(
+                [40.748817, -73.985428],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_1ac66f1e71037697a1e9af9383c769fc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5d36580933a1260eef44edc9b3367aa7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0807aef008db1954f7e54f6aac0e2654 = $(`<div id="html_0807aef008db1954f7e54f6aac0e2654" style="width: 100.0%; height: 100.0%;"><b>Empire State Building</b><br>Iconic skyscraper.</div>`)[0];
+                popup_5d36580933a1260eef44edc9b3367aa7.setContent(html_0807aef008db1954f7e54f6aac0e2654);
+            
+        
+
+        marker_51c4be4c4f8d3acf750080d5c9766838.bindPopup(popup_5d36580933a1260eef44edc9b3367aa7)
+        ;
+
+        
+    
+    
+            marker_51c4be4c4f8d3acf750080d5c9766838.bindTooltip(
+                `<div>
+                     Empire State Building
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_51c4be4c4f8d3acf750080d5c9766838.setIcon(icon_1ac66f1e71037697a1e9af9383c769fc);
+            
+    
+            var poly_line_bff36a2f7363b77120d740c83538bc1f = L.polyline(
+                [[[40.7488094, -73.9854335], [40.7497939, -73.9877382]], [[40.7497939, -73.9877382], [40.7580382, -73.9817849]], [[40.7580382, -73.9817849], [40.7592314, -73.9846309]], [[40.7592314, -73.9846309], [40.7588125, -73.9849163]]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_a2b339347f960ca7b7858721a68f2c05 = L.marker(
+                [40.7580382, -73.9817849],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_ad9314120942357d43d080eae13610c8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_069cd89686090cf7e5d4a7dd5876670e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_aaaacdc308d131bade2d408ccd02b3df = $(`<div id="html_aaaacdc308d131bade2d408ccd02b3df" style="width: 100.0%; height: 100.0%;"><b>Driving Route</b><br>Duration: 9 mins<br>Route: 6th Ave/Ave of the Americas</div>`)[0];
+                popup_069cd89686090cf7e5d4a7dd5876670e.setContent(html_aaaacdc308d131bade2d408ccd02b3df);
+            
+        
+
+        marker_a2b339347f960ca7b7858721a68f2c05.bindPopup(popup_069cd89686090cf7e5d4a7dd5876670e)
+        ;
+
+        
+    
+    
+                marker_a2b339347f960ca7b7858721a68f2c05.setIcon(icon_ad9314120942357d43d080eae13610c8);
+            
+    
+            var poly_line_d960c7173464edce8d51f377749d5faf = L.polyline(
+                [[[40.7488961, -73.98537], [40.749565, -73.98795299999999]], [[40.749565, -73.98795299999999], [40.760479, -73.98374199999999]], [[40.760479, -73.98374199999999], [40.7588423, -73.98499269999999]]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_8c161dd742e4404e06cb2cf4d64c2cc8 = L.marker(
+                [40.749565, -73.98795299999999],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_bc05b1a8ce85ec1f27493eb254c0dcbc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dbd314e250cea0abb807c282af0c53a9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d724d38061e64779cc661f8b98da316a = $(`<div id="html_d724d38061e64779cc661f8b98da316a" style="width: 100.0%; height: 100.0%;"><b>Transit Route</b><br>Duration: 11 mins<br>Route: </div>`)[0];
+                popup_dbd314e250cea0abb807c282af0c53a9.setContent(html_d724d38061e64779cc661f8b98da316a);
+            
+        
+
+        marker_8c161dd742e4404e06cb2cf4d64c2cc8.bindPopup(popup_dbd314e250cea0abb807c282af0c53a9)
+        ;
+
+        
+    
+    
+                marker_8c161dd742e4404e06cb2cf4d64c2cc8.setIcon(icon_bc05b1a8ce85ec1f27493eb254c0dcbc);
+            
+    
+            var poly_line_ad7e2f79d82f02c4230d3107edfe3dbb = L.polyline(
+                [[[40.7488961, -73.98537], [40.74997450000001, -73.9879507]], [[40.74997450000001, -73.9879507], [40.757879, -73.9854365]], [[40.757879, -73.9854365], [40.7588423, -73.98499269999999]]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_30794a749011db73dbeef8c1c47ae9c9 = L.marker(
+                [40.74997450000001, -73.9879507],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_12691f3f33d2b812234457e8435bc134 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_33aab2e9f47e93582f654cd495068269 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_36b4176714673123685fa12d5ce16529 = $(`<div id="html_36b4176714673123685fa12d5ce16529" style="width: 100.0%; height: 100.0%;"><b>Walking Route</b><br>Duration: 18 mins<br>Route: Broadway</div>`)[0];
+                popup_33aab2e9f47e93582f654cd495068269.setContent(html_36b4176714673123685fa12d5ce16529);
+            
+        
+
+        marker_30794a749011db73dbeef8c1c47ae9c9.bindPopup(popup_33aab2e9f47e93582f654cd495068269)
+        ;
+
+        
+    
+    
+                marker_30794a749011db73dbeef8c1c47ae9c9.setIcon(icon_12691f3f33d2b812234457e8435bc134);
+            
+    
+            var marker_fcf994799a4fa36d57e455d87d00f62f = L.marker(
+                [40.758896, -73.98513],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_1c11d3b44fd92d5c164c207417824220 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_60db1323a387eaedc760008959514243 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7442acd807723dc8d11ba312a09f5be8 = $(`<div id="html_7442acd807723dc8d11ba312a09f5be8" style="width: 100.0%; height: 100.0%;"><b>Times Square</b><br>Entertainment hub.</div>`)[0];
+                popup_60db1323a387eaedc760008959514243.setContent(html_7442acd807723dc8d11ba312a09f5be8);
+            
+        
+
+        marker_fcf994799a4fa36d57e455d87d00f62f.bindPopup(popup_60db1323a387eaedc760008959514243)
+        ;
+
+        
+    
+    
+            marker_fcf994799a4fa36d57e455d87d00f62f.bindTooltip(
+                `<div>
+                     Times Square
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fcf994799a4fa36d57e455d87d00f62f.setIcon(icon_1c11d3b44fd92d5c164c207417824220);
+            
+    
+            var poly_line_73b6b755b2f7d736cee646a50cb4934d = L.polyline(
+                [[[40.7588125, -73.9849163], [40.7535126, -73.9887866]], [[40.7535126, -73.9887866], [40.7457793, -73.970426]], [[40.7457793, -73.970426], [40.7430948, -73.97233039999999]], [[40.7430948, -73.97233039999999], [40.7408913, -73.9728648]], [[40.7408913, -73.9728648], [40.7086079, -73.99854789999999]], [[40.7086079, -73.99854789999999], [40.7105979, -74.0026268]], [[40.7105979, -74.0026268], [40.7060426, -73.99692399999999]]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_525900337c4c76ee6be2a8a217c1dd0a = L.marker(
+                [40.7430948, -73.97233039999999],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_97b07d6bfd6959dbe88afdf626ba761b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1c99c1da35cc3b7c9bd9cea1952c61fa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2a11a0f287850807dbfb767707eb84bc = $(`<div id="html_2a11a0f287850807dbfb767707eb84bc" style="width: 100.0%; height: 100.0%;"><b>Driving Route</b><br>Duration: 22 mins<br>Route: FDR Dr</div>`)[0];
+                popup_1c99c1da35cc3b7c9bd9cea1952c61fa.setContent(html_2a11a0f287850807dbfb767707eb84bc);
+            
+        
+
+        marker_525900337c4c76ee6be2a8a217c1dd0a.bindPopup(popup_1c99c1da35cc3b7c9bd9cea1952c61fa)
+        ;
+
+        
+    
+    
+                marker_525900337c4c76ee6be2a8a217c1dd0a.setIcon(icon_97b07d6bfd6959dbe88afdf626ba761b);
+            
+    
+            var poly_line_df025f3dc030afada2f9c31d39493113 = L.polyline(
+                [[[40.7588423, -73.98499269999999], [40.761726, -73.98384899999999]], [[40.761726, -73.98384899999999], [40.709415, -74.006569]], [[40.709415, -74.006569], [40.7060925, -73.99685509999999]]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_99e0403a3ff177d615862d833ef8fb13 = L.marker(
+                [40.761726, -73.98384899999999],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_af4276c7a093e22f5751de603afb702d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_55da98f64b5e24b329127f7884fcfb67 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_14a50779d347ea60e16f0fa0d0361ad2 = $(`<div id="html_14a50779d347ea60e16f0fa0d0361ad2" style="width: 100.0%; height: 100.0%;"><b>Transit Route</b><br>Duration: 46 mins<br>Route: </div>`)[0];
+                popup_55da98f64b5e24b329127f7884fcfb67.setContent(html_14a50779d347ea60e16f0fa0d0361ad2);
+            
+        
+
+        marker_99e0403a3ff177d615862d833ef8fb13.bindPopup(popup_55da98f64b5e24b329127f7884fcfb67)
+        ;
+
+        
+    
+    
+                marker_99e0403a3ff177d615862d833ef8fb13.setIcon(icon_af4276c7a093e22f5751de603afb702d);
+            
+    
+            var poly_line_9ed68c1fd09c96238ce2e1e6280aa4a8 = L.polyline(
+                [[[40.7588423, -73.98499269999999], [40.7294469, -74.0050649]], [[40.7294469, -74.0050649], [40.718321, -74.0070325]], [[40.718321, -74.0070325], [40.7162465, -74.0026807]], [[40.7162465, -74.0026807], [40.7136324, -74.0037593]], [[40.7136324, -74.0037593], [40.7131042, -74.0042625]], [[40.7131042, -74.0042625], [40.7126282, -74.0045462]], [[40.7126282, -74.0045462], [40.7116981, -74.00389050000001]], [[40.7116981, -74.00389050000001], [40.7060925, -73.99685509999999]]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_fb298ec65f5b1b5cc1330c097c3c7450 = L.marker(
+                [40.7136324, -74.0037593],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_02d52e330c4794b0b3929e8ed9426468 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_903419da939874292e453441be820b1d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_447a41aafe7e2f10d8ae4053b20b7782 = $(`<div id="html_447a41aafe7e2f10d8ae4053b20b7782" style="width: 100.0%; height: 100.0%;"><b>Walking Route</b><br>Duration: 1 hour 40 mins<br>Route: 7th Ave</div>`)[0];
+                popup_903419da939874292e453441be820b1d.setContent(html_447a41aafe7e2f10d8ae4053b20b7782);
+            
+        
+
+        marker_fb298ec65f5b1b5cc1330c097c3c7450.bindPopup(popup_903419da939874292e453441be820b1d)
+        ;
+
+        
+    
+    
+                marker_fb298ec65f5b1b5cc1330c097c3c7450.setIcon(icon_02d52e330c4794b0b3929e8ed9426468);
+            
+    
+            var marker_5e1646e1f8c42618864b25ac68d6aeda = L.marker(
+                [40.706086, -73.996864],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_af24ecdd72a1ef363cf59b94c7cb5ce1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b4cef01c97247515f1b81a70ae39c1b6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3a2cfbd13440780ae36dbb10f8e61c14 = $(`<div id="html_3a2cfbd13440780ae36dbb10f8e61c14" style="width: 100.0%; height: 100.0%;"><b>Brooklyn Bridge</b><br>Famous bridge.</div>`)[0];
+                popup_b4cef01c97247515f1b81a70ae39c1b6.setContent(html_3a2cfbd13440780ae36dbb10f8e61c14);
+            
+        
+
+        marker_5e1646e1f8c42618864b25ac68d6aeda.bindPopup(popup_b4cef01c97247515f1b81a70ae39c1b6)
+        ;
+
+        
+    
+    
+            marker_5e1646e1f8c42618864b25ac68d6aeda.bindTooltip(
+                `<div>
+                     Brooklyn Bridge
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5e1646e1f8c42618864b25ac68d6aeda.setIcon(icon_af24ecdd72a1ef363cf59b94c7cb5ce1);
+            
+    
+            var poly_line_15e143c89b639457ba1942777a95be27 = L.polyline(
+                [[[40.7060426, -73.99692399999999], [40.7007666, -73.9902785]], [[40.7007666, -73.9902785], [40.6978416, -73.9887553]], [[40.6978416, -73.9887553], [40.6962532, -73.9888749]], [[40.6962532, -73.9888749], [40.6959618, -73.9845891]], [[40.6959618, -73.9845891], [40.6976559, -73.9851956]], [[40.6976559, -73.9851956], [40.7162648, -73.9960112]], [[40.7162648, -73.9960112], [40.7235257, -74.0076012]], [[40.7235257, -74.0076012], [40.7245111, -74.007082]], [[40.7245111, -74.007082], [40.73155819999999, -74.03940419999999]], [[40.73155819999999, -74.03940419999999], [40.7319492, -74.04628389999999]], [[40.7319492, -74.04628389999999], [40.7040573, -74.0654299]], [[40.7040573, -74.0654299], [40.7021632, -74.0698286]], [[40.7021632, -74.0698286], [40.7004803, -74.06819759999999]], [[40.7004803, -74.06819759999999], [40.6927499, -74.0565986]]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_6da591e984b87717033c5c80538e446d = L.marker(
+                [40.7235257, -74.0076012],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_9305776809dd072e02667520d51f9319 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_769978754156bbf4bfbd36200f68d8a4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_92488cc6278ec8df55e7eace3ee8878f = $(`<div id="html_92488cc6278ec8df55e7eace3ee8878f" style="width: 100.0%; height: 100.0%;"><b>Driving Route</b><br>Duration: 28 mins<br>Route: I-78 W</div>`)[0];
+                popup_769978754156bbf4bfbd36200f68d8a4.setContent(html_92488cc6278ec8df55e7eace3ee8878f);
+            
+        
+
+        marker_6da591e984b87717033c5c80538e446d.bindPopup(popup_769978754156bbf4bfbd36200f68d8a4)
+        ;
+
+        
+    
+    
+                marker_6da591e984b87717033c5c80538e446d.setIcon(icon_9305776809dd072e02667520d51f9319);
+            
+    
+            var poly_line_6a4452541b5e611a0c1fa829a3b06c67 = L.polyline(
+                [[[40.7060925, -73.99685509999999], [40.6893539, -74.04427869999999]]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_82602164dc498786e87b06a3e6d489b3 = L.marker(
+                [40.7060925, -73.99685509999999],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_2189b3ce8af150462bff0fa09f032e84 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_34336b546ccdf847995caa89174c9427 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_69c55dc4d9b049414d36daeb0f520b18 = $(`<div id="html_69c55dc4d9b049414d36daeb0f520b18" style="width: 100.0%; height: 100.0%;"><b>Transit Route</b><br>Duration: 57 mins<br>Route: Battery Park - Liberty Island</div>`)[0];
+                popup_34336b546ccdf847995caa89174c9427.setContent(html_69c55dc4d9b049414d36daeb0f520b18);
+            
+        
+
+        marker_82602164dc498786e87b06a3e6d489b3.bindPopup(popup_34336b546ccdf847995caa89174c9427)
+        ;
+
+        
+    
+    
+                marker_82602164dc498786e87b06a3e6d489b3.setIcon(icon_2189b3ce8af150462bff0fa09f032e84);
+            
+    
+            var poly_line_64d0b9688033e16a8087d3f985b73de8 = L.polyline(
+                [[[40.7060925, -73.99685509999999], [40.7116981, -74.00389050000001]], [[40.7116981, -74.00389050000001], [40.7117373, -74.003953]], [[40.7117373, -74.003953], [40.7115132, -74.0045146]], [[40.7115132, -74.0045146], [40.7119222, -74.0057212]], [[40.7119222, -74.0057212], [40.7112291, -74.0085249]], [[40.7112291, -74.0085249], [40.7113855, -74.0088154]], [[40.7113855, -74.0088154], [40.7045255, -74.0144208]], [[40.7045255, -74.0144208], [40.7044598, -74.01443499999999]], [[40.7044598, -74.01443499999999], [40.7044456, -74.0144674]], [[40.7044456, -74.0144674], [40.7041575, -74.0145632]], [[40.7041575, -74.0145632], [40.7041483, -74.01466669999999]], [[40.7041483, -74.01466669999999], [40.7031668, -74.0163563]], [[40.7031668, -74.0163563], [40.7029489, -74.0162665]], [[40.7029489, -74.0162665], [40.7029056, -74.01638489999999]], [[40.7029056, -74.01638489999999], [40.7026068, -74.01641529999999]], [[40.7026068, -74.01641529999999], [40.7024635, -74.0168173]], [[40.7024635, -74.0168173], [40.6900333, -74.0426978]], [[40.6900333, -74.0426978], [40.6896603, -74.0435481]], [[40.6896603, -74.0435481], [40.6897724, -74.0436313]], [[40.6897724, -74.0436313], [40.68970849999999, -74.0449524]], [[40.68970849999999, -74.0449524], [40.6893711, -74.044872]], [[40.6893711, -74.044872], [40.6893539, -74.04427869999999]]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var marker_d545a11aaff576ece112a06eeeee43f9 = L.marker(
+                [40.7041483, -74.01466669999999],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_e804e02bdd37f646c1f9f3e813e8d7a2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_827fcbd4fbd560c8506439573d3a5e8f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8eb718f1cd9908afeec4ac09fda61135 = $(`<div id="html_8eb718f1cd9908afeec4ac09fda61135" style="width: 100.0%; height: 100.0%;"><b>Walking Route</b><br>Duration: 57 mins<br>Route: Battery Park - Liberty Island</div>`)[0];
+                popup_827fcbd4fbd560c8506439573d3a5e8f.setContent(html_8eb718f1cd9908afeec4ac09fda61135);
+            
+        
+
+        marker_d545a11aaff576ece112a06eeeee43f9.bindPopup(popup_827fcbd4fbd560c8506439573d3a5e8f)
+        ;
+
+        
+    
+    
+                marker_d545a11aaff576ece112a06eeeee43f9.setIcon(icon_e804e02bdd37f646c1f9f3e813e8d7a2);
+            
+    
+            var marker_59077367ea52c82437271e6b4aa20012 = L.marker(
+                [40.689247, -74.044502],
+                {
+}
+            ).addTo(map_7264a7ac58de15564a4be42494530598);
+        
+    
+            var icon_5cae3f1c8446fbb82bd7bc3123de8ca1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_60d2304f7c7da63c9860b3d6ab7cb235 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_be7547aae29b227521789e193f9510d4 = $(`<div id="html_be7547aae29b227521789e193f9510d4" style="width: 100.0%; height: 100.0%;"><b>Statue of Liberty</b><br>Symbol of freedom.</div>`)[0];
+                popup_60d2304f7c7da63c9860b3d6ab7cb235.setContent(html_be7547aae29b227521789e193f9510d4);
+            
+        
+
+        marker_59077367ea52c82437271e6b4aa20012.bindPopup(popup_60d2304f7c7da63c9860b3d6ab7cb235)
+        ;
+
+        
+    
+    
+            marker_59077367ea52c82437271e6b4aa20012.bindTooltip(
+                `<div>
+                     Statue of Liberty
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_59077367ea52c82437271e6b4aa20012.setIcon(icon_5cae3f1c8446fbb82bd7bc3123de8ca1);
+            
+</script>
+</html>
