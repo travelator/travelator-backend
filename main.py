@@ -9,7 +9,6 @@ import json
 from dotenv import load_dotenv
 import os
 import asyncio
-import time
 
 load_dotenv()
 
@@ -35,13 +34,9 @@ app.add_middleware(
 https_security = True if environment == "prod" else False
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Travelator backend is running"}
-
-
 @app.post("/activities")
 async def get_activities(request: ActivityRequest, response: Response):
+    # Unpack request parameters
     city = request.city
     timeOfDay = request.timeOfDay
     group = request.group
@@ -59,18 +54,17 @@ async def get_activities(request: ActivityRequest, response: Response):
     )
 
     # Activity titles is a list of string representing different activity titles
-    activity_titles = await generator.generate_activities(city, titles_only=True)
+    activity_titles = await generator.generate_activities(
+        city, titles_only=True, timeOfDay=timeOfDay, group=group
+    )
     titles_dict = {item["id"]: item["title"] for item in activity_titles}
 
-    start = time.time()
-
     activity_response, image_dict = await asyncio.gather(
-        generator.generate_activities(city, titles=activity_titles),
-        get_n_random_places(titles_dict)  # This will run concurrently
+        generator.generate_activities(
+            city, titles=activity_titles, timeOfDay=timeOfDay, group=group
+        ),
+        get_n_random_places(titles_dict),  # This will run concurrently
     )
-
-    run_time = time.time() -start
-    print(f"Ran detail and image generation in {run_time:.2f}s")
 
     # update images in response
     for item in activity_response:
@@ -81,23 +75,29 @@ async def get_activities(request: ActivityRequest, response: Response):
 
 @app.post("/itinerary")
 async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(None)):
+    # Unpack request parameters
     city = request.city
+    preferences = request.preferences
 
+    # Look for cookie data on search parameters
     if searchConfig:
         try:
             cookie_data = json.loads(searchConfig)
         except:
             cookie_data = {}
-            print("cookie could not be parsed")
         timeOfDay = cookie_data.get("timeOfDay", None)
         group = cookie_data.get("group", None)
 
-    itinerary_response = generator.generate_itinerary(city, timeOfDay, group)
+    # Get itinerary response and titles
+    itinerary_response = generator.generate_itinerary(
+        city, timeOfDay, group, preferences=preferences
+    )
     titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
 
+    # Get itinerary details and images
     detailed_itinerary, image_dict = await asyncio.gather(
         generator.generate_itinerary_details(itinerary_response, city, group),
-        get_n_random_places(titles_dict)  # This will run concurrently
+        get_n_random_places(titles_dict),  # This will run concurrently
     )
 
     # update images in response

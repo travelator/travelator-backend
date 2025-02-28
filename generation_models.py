@@ -33,8 +33,10 @@ class Activity(BaseModel):
     id: int = Field(
         description="Unique identifier for the activity. If one is provided you must keep the original ID"
     )
-    title: str = Field(description="Title of the activity.")
-    description: str = Field(description="Detailed description of the activity.")
+    title: str = Field(description="Brief title of the activity, max a few words.")
+    description: str = Field(
+        description="Brief description of the activity - maximum two sentences. It should just tell me what the activity is - it should not try and fit it into an itinerary timeline."
+    )
     image_link: List[str] = Field(
         description="URLs of images representing the activity. Do not generate."
     )
@@ -47,7 +49,7 @@ class Activity(BaseModel):
 class ActivityTitleStruct(BaseModel):
     """Activity title and id"""
 
-    title: str = Field(description="Title of the activity")
+    title: str = Field(description="Brief title of the activity, max a few words")
     id: int = Field(description="Unique id for the activity")
 
 
@@ -62,13 +64,15 @@ class ActivityTitles(BaseModel):
 class ItineraryItem(BaseModel):
     """An entry for an itinerary item"""
 
-    title: str = Field(description="Title of the itinerary item.")
+    title: str = Field(description="Brief title of the itinerary item.")
     transport: bool = Field(
         description="Only TRUE if the itinerary item is not an actual activity of any kind but is just transport from one location to another."
     )
     start: str = Field(description="Start time of the itinerary item.")
     end: str = Field(description="End time of the itinerary item.")
-    description: str = Field(description="Detailed description of the itinerary item.")
+    description: str = Field(
+        description="Brief description of the activity - maximum two sentences."
+    )
     price: float = Field(
         description="Cost of the itinerary item, in GBP. If free, write 0."
     )
@@ -86,9 +90,11 @@ class ItineraryItem(BaseModel):
     duration: int = Field(description="Duration of the itinerary item in minutes.")
     id: int = Field(description="Unique identifier for the itinerary item.")
 
+
 class SimpleItineraryItem(BaseModel):
     """An entry for a simplified itinerary item"""
-    title: str = Field(description="Title of the itinerary item.")
+
+    title: str = Field(description="Brief title of the itinerary item.")
     imageTag: str = Field(
         description="A search term to find a relevant image tag for the given activity or location."
     )
@@ -105,6 +111,7 @@ class FullItinerary(BaseModel):
     itinerary: list[ItineraryItem] = Field(
         description="A full day itinerary for the given location"
     )
+
 
 class ItinerarySummary(BaseModel):
     itinerary: list[SimpleItineraryItem] = Field(

@@ -3,8 +3,11 @@ import asyncio
 
 
 async def get_n_random_places(titles):
-    keys = list(titles.keys())
-    values = list(titles.values())
+    # filter out items where value is empty
+    filtered_titles = {k: v for k, v in titles.items() if v is not None and len(v) > 0}
+
+    keys = list(filtered_titles.keys())
+    values = list(filtered_titles.values())
     final_data = await search_duckduckgo_images(values, keys)
     return final_data
 
