@@ -19,7 +19,7 @@ class Generator:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini")
 
-    def generate_activities(self, location, titles_only=False, titles=None):
+    async def generate_activities(self, location, titles_only=False, titles=None):
         num_activities = 5
 
         if titles_only:
@@ -40,13 +40,15 @@ class Generator:
             SystemMessage(
                 "You are an AI travel agent that needs to suggest possible itinerary activities to a user based on a given location."
                 "You must provide all details in the schema requested."
+                "The user is a local - they are not looking for touristy activities, but for fun ideas off the beaten track."
             ),
             HumanMessage(human_prompt),
         ]
 
-        response = structured_model.invoke(messages)
+        response = await structured_model.ainvoke(messages)
 
         return response.model_dump()["activities"]
+    
     
     def get_group_prompt(self, group:str):
         if (group == "solo"):
@@ -68,6 +70,7 @@ class Generator:
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
                 "You MUST include steps in the itinerary for travel between locations." 
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events."
+                "The user is a local - they are not looking for touristy activities, but for fun ideas off the beaten track."
             ),
             HumanMessage(
                 f"Generate a full day itinerary for the user in the following location: {location}."

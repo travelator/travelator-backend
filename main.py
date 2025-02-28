@@ -8,6 +8,8 @@ from datetime import timedelta
 import json
 from dotenv import load_dotenv
 import os
+import asyncio
+import time
 
 load_dotenv()
 
@@ -39,7 +41,7 @@ def read_root():
 
 
 @app.post("/activities")
-def get_activities(request: ActivityRequest, response: Response):
+async def get_activities(request: ActivityRequest, response: Response):
     city = request.city
     timeOfDay = request.timeOfDay
     group = request.group
@@ -57,12 +59,18 @@ def get_activities(request: ActivityRequest, response: Response):
     )
 
     # Activity titles is a list of string representing different activity titles
-    activity_titles = generator.generate_activities(city, titles_only=True)
-    activity_response = generator.generate_activities(city, titles=activity_titles)
-
-    # get images
+    activity_titles = await generator.generate_activities(city, titles_only=True)
     titles_dict = {item["id"]: item["title"] for item in activity_titles}
-    image_dict = get_n_random_places(titles_dict)
+
+    start = time.time()
+
+    activity_response, image_dict = await asyncio.gather(
+        generator.generate_activities(city, titles=activity_titles),
+        get_n_random_places(titles_dict)  # This will run concurrently
+    )
+
+    run_time = time.time() -start
+    print(f"Ran detail and image generation in {run_time:.2f}s")
 
     # update images in response
     for item in activity_response:
@@ -85,11 +93,12 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
         group = cookie_data.get("group", None)
 
     itinerary_response = generator.generate_itinerary(city, timeOfDay, group)
-    detailed_itinerary = await generator.generate_itinerary_details(itinerary_response, city, group)
-
-    # get images
     titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
-    image_dict = get_n_random_places(titles_dict)
+
+    detailed_itinerary, image_dict = await asyncio.gather(
+        generator.generate_itinerary_details(itinerary_response, city, group),
+        get_n_random_places(titles_dict)  # This will run concurrently
+    )
 
     # update images in response
     for item in detailed_itinerary:
