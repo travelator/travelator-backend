@@ -61,7 +61,7 @@ async def get_activities(request: ActivityRequest, response: Response):
         generator.generate_activities(
             city, titles=activity_titles, timeOfDay=timeOfDay, group=group
         ),
-        get_n_random_places(titles_dict),  # This will run concurrently
+        get_n_random_places(titles_dict),
     )
 
     # update images in response
@@ -102,7 +102,18 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     for item in detailed_itinerary:
         item["image_link"] = image_dict.get(item["id"], [])
 
+    # ensure item sorted by start
+    detailed_itinerary.sort(key=lambda item: item["start"])
+
     return {"itinerary": detailed_itinerary}
+
+
+@app.get("/facts")
+async def get_facts(location: str, num: int):
+    # Get facts for the location
+    facts = await generator.generate_facts(location, num)
+
+    return {"facts": facts}
 
 
 if __name__ == "__main__":

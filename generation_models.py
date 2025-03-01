@@ -117,3 +117,9 @@ class ItinerarySummary(BaseModel):
     itinerary: list[SimpleItineraryItem] = Field(
         description="A full day itinerary for the given location"
     )
+
+
+class Facts(BaseModel):
+    facts: list[str] = Field(
+        description="A list of interesting facts about the given location."
+    )
