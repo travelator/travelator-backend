@@ -11,6 +11,7 @@ from generation_models import (
 )
 import asyncio
 from typing import List
+import prompts
 
 load_dotenv()
 
@@ -19,18 +20,15 @@ class Generator:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini")
 
-    # Prompt formatting based on group
-    def get_group_prompt(self, group: str):
-        if group == "solo":
-            return "alone"
-        elif group == "couples":
-            return "as a couple with their partner"
-        else:
-            return f"with {group}"
-
     # Generate activities
     async def generate_activities(
-        self, location, titles_only=False, titles=None, timeOfDay=None, group=None
+        self,
+        location,
+        titles_only=False,
+        uniqueness=None,
+        titles=None,
+        timeOfDay=None,
+        group=None,
     ):
         num_activities = 5
 
@@ -48,10 +46,15 @@ class Generator:
             human_prompt = f"Generate {num_activities} activities that could make for an interesting activity in the following location: {location}."
 
         if group is not None:
-            human_prompt += f" The user is travelling {self.get_group_prompt(group)}."
+            human_prompt += (
+                f" The user is travelling {prompts.get_group_prompt(group)}."
+            )
 
         if timeOfDay is not None:
             human_prompt += f" The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}."
+
+        if uniqueness is not None:
+            human_prompt += prompts.get_uniqueness_prompt(uniqueness)
 
         # set prompting messages
         messages = [
@@ -68,7 +71,9 @@ class Generator:
         return response.model_dump()["activities"]
 
     # Generate itinerary item details
-    def generate_itinerary(self, location, timeOfDay, group, preferences=None):
+    def generate_itinerary(
+        self, location, timeOfDay, group, uniqueness, preferences=None
+    ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
         if preferences is not None:
@@ -86,8 +91,9 @@ class Generator:
             SystemMessage(
                 "You are an AI travel agent that needs to suggest possible itinerary activities to a user based on a given location."
                 "You must provide all details in the schema requested."
-                f"The user is travelling {self.get_group_prompt(group)}."
+                f"The user is travelling {prompts.get_group_prompt(group)}."
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
+                f"{prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
             ),
@@ -118,7 +124,7 @@ class Generator:
                 f"You are an AI travel agent preparing an itinerary for a user travelling to {location}."
                 "Your writing style should match a travel blogger, it should be casual."
                 "You must provide full details in the schema requested for the given activity."
-                f"Bear in mind the user is travelling {self.get_group_prompt(group)}"
+                f"Bear in mind the user is travelling {prompts.get_group_prompt(group)}"
             ),
             HumanMessage(
                 f"Generate full details for the following activity: {itineraryItem.title}"

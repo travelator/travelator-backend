@@ -6,6 +6,7 @@ class ActivityRequest(BaseModel):
     city: str
     timeOfDay: List[str]
     group: str
+    uniqueness: int
 
 
 class Preferences(BaseModel):

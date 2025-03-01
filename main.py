@@ -37,6 +37,7 @@ async def get_activities(request: ActivityRequest, response: Response):
     city = request.city
     timeOfDay = request.timeOfDay
     group = request.group
+    uni = request.uniqueness
 
     # get user preferences for setting cookie
     userPreferences = json.dumps(request.model_dump())
@@ -53,13 +54,17 @@ async def get_activities(request: ActivityRequest, response: Response):
 
     # Activity titles is a list of string representing different activity titles
     activity_titles = await generator.generate_activities(
-        city, titles_only=True, timeOfDay=timeOfDay, group=group
+        city, titles_only=True, timeOfDay=timeOfDay, group=group, uniqueness=uni
     )
     titles_dict = {item["id"]: item["title"] for item in activity_titles}
 
     activity_response, image_dict = await asyncio.gather(
         generator.generate_activities(
-            city, titles=activity_titles, timeOfDay=timeOfDay, group=group
+            city,
+            titles=activity_titles,
+            timeOfDay=timeOfDay,
+            group=group,
+            uniqueness=uni,
         ),
         get_n_random_places(titles_dict),
     )
@@ -85,10 +90,11 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
 
     timeOfDay = cookie_data.get("timeOfDay", None)
     group = cookie_data.get("group", None)
+    uni = cookie_data.get("uniqueness", None)
 
     # Get itinerary response and titles
     itinerary_response = generator.generate_itinerary(
-        city, timeOfDay, group, preferences=preferences
+        city, timeOfDay, group, preferences=preferences, uniqueness=uni
     )
     titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
 
