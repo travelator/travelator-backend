@@ -30,9 +30,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# https security
-https_security = True if environment == "prod" else False
-
 
 @app.post("/activities")
 async def get_activities(request: ActivityRequest, response: Response):
@@ -50,7 +47,8 @@ async def get_activities(request: ActivityRequest, response: Response):
         value=userPreferences,  # JSON string value
         max_age=timedelta(days=1),  # Cookie expiration
         httponly=False,  # Prevent JS access
-        secure=https_security,
+        secure=True,
+        samesite="None",
     )
 
     # Activity titles is a list of string representing different activity titles
@@ -80,13 +78,13 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     preferences = request.preferences
 
     # Look for cookie data on search parameters
-    if searchConfig:
-        try:
-            cookie_data = json.loads(searchConfig)
-        except:
-            cookie_data = {}
-        timeOfDay = cookie_data.get("timeOfDay", None)
-        group = cookie_data.get("group", None)
+    try:
+        cookie_data = json.loads(searchConfig)
+    except:
+        cookie_data = {}
+
+    timeOfDay = cookie_data.get("timeOfDay", None)
+    group = cookie_data.get("group", None)
 
     # Get itinerary response and titles
     itinerary_response = generator.generate_itinerary(
