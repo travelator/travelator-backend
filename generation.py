@@ -7,6 +7,7 @@ from generation_models import (
     ItineraryItem,
     SimpleItineraryItem,
     ItinerarySummary,
+    Facts,
 )
 import asyncio
 from typing import List
@@ -141,6 +142,29 @@ class Generator:
         ]
         responses = await asyncio.gather(*tasks)
         return responses
+
+    async def generate_facts(self, location: str, num: int = 1):
+        """Generates some interesting facts about a given location"""
+        # set model
+        structured_model = self.llm.with_structured_output(Facts)
+
+        # make num bounded between 1 and 5
+        num = max(1, min(num, 5))
+
+        # set prompting messages
+        messages = [
+            SystemMessage(
+                f"You must provide {num} interesting facts for a given location that will be good for a loading screen."
+                "Here is an example for London: 'London is home to the world's first underground railway system, the Tube, which opened in 1863'"
+            ),
+            HumanMessage(
+                f"Generate {num} interesting facts for the following location: {location}"
+            ),
+        ]
+
+        response = await structured_model.ainvoke(messages)
+
+        return response.facts
 
 
 """
