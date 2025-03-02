@@ -10,6 +10,8 @@ from generation_models import (
 )
 import asyncio
 from typing import List
+import requests
+import os
 
 load_dotenv()
 
@@ -26,6 +28,34 @@ class Generator:
             return "as a couple with their partner"
         else:
             return f"with {group}"
+
+    # Fetch Live weather data
+    @staticmethod
+    def get_weather(location):
+        """
+        Fetches current weather conditions for a given location using WeatherAPI.
+        """
+        API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
+        url = f"http://api.weatherapi.com/v1/current.json"
+
+        params = {
+            "key": API_KEY,
+            "q": location,
+            "aqi": "no"  # Exclude air quality data for a faster response
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        if response.status_code != 200:
+            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"}
+
+        return {
+            "description": data["current"]["condition"]["text"],  # Weather description
+            "temperature": data["current"]["temp_c"],  # Temperature in Celsius
+            "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
+            "wind_speed": data["current"]["wind_kph"]  # Wind speed in km/h
+        }
 
     # Generate activities
     async def generate_activities(
@@ -70,6 +100,20 @@ class Generator:
     def generate_itinerary(self, location, timeOfDay, group, preferences=None):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
+        # Fetch live weather data
+        weather = Generator.get_weather(location)
+        weather_desc = weather["description"]
+        rain_level = weather["rain"]
+        temp = weather["temperature"]
+
+        # Adjust prompt based on weather
+        weather_note = f"The current weather in {location} is {weather_desc}, with a temperature of {temp}°C."
+        if rain_level > 5:
+            weather_note += " It is currently raining, so avoid outdoor activities."
+        elif rain_level == 0:
+            weather_note += " The weather is clear, so outdoor activities are preferred."
+
+        # Adjust preference string
         if preferences is not None:
             preference_string = (
                 f"The user has already been shown some activities that they could like or dislike within the given location."
@@ -80,7 +124,7 @@ class Generator:
         else:
             preference_string = ""
 
-        # set prompting messages
+        # Update LLM prompt
         messages = [
             SystemMessage(
                 "You are an AI travel agent that needs to suggest possible itinerary activities to a user based on a given location."
@@ -88,9 +132,10 @@ class Generator:
                 f"The user is travelling {self.get_group_prompt(group)}."
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
                 "You MUST include steps in the itinerary for travel between locations."
-                "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
+                "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times"
             ),
-            SystemMessage(preference_string),
+            SystemMessage(weather_note),  # 🌦️ Inject weather into prompt
+            SystemMessage(preference_string),  # 🎯 Inject user preferences
             HumanMessage(
                 f"Generate a full day itinerary for the user in the following location: {location}."
                 "Explicitly include travel steps in the itinerary. For example, the title of an activity step could be 'Take the tube from Waterloo to Oxford Circus'"
@@ -98,8 +143,7 @@ class Generator:
         ]
 
         response = structured_model.invoke(messages)
-
-        return response
+        return response.model_dump()["itinerary"]
 
     # Generate details for all items asynchronously
     async def generate_item_details(
@@ -127,7 +171,7 @@ class Generator:
         ]
 
         response = await structured_model.ainvoke(messages)
-
+        print(response.model_dump())
         return response.model_dump()
 
     async def generate_itinerary_details(
