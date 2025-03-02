@@ -96,7 +96,13 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
 
     # Get itinerary response and titles
     itinerary_response = generator.generate_itinerary(
-        city, timeOfDay, group, preferences=preferences, uniqueness=uni, prior_itinerary=itinerary, feedback=feedback
+        city,
+        timeOfDay,
+        group,
+        preferences=preferences,
+        uniqueness=uni,
+        prior_itinerary=itinerary,
+        feedback=feedback,
     )
     titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
 
@@ -117,6 +123,14 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
 
 
 @app.get("/facts")
+async def get_facts(location: str, num: int):
+    # Get facts for the location
+    facts = await generator.generate_facts(location, num)
+
+    return {"facts": facts}
+
+
+@app.get("/single_fact")
 async def get_facts(location: str, num: int):
     # Get facts for the location
     facts = await generator.generate_facts(location, num)

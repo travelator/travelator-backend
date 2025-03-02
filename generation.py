@@ -72,7 +72,14 @@ class Generator:
 
     # Generate itinerary item details
     def generate_itinerary(
-        self, location, timeOfDay, group, uniqueness, preferences=None, prior_itinerary=None, feedback=None
+        self,
+        location,
+        timeOfDay,
+        group,
+        uniqueness,
+        preferences=None,
+        prior_itinerary=None,
+        feedback=None,
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
@@ -181,11 +188,13 @@ class Generator:
         return response.facts
 
 
-"""
-start = time.time()
+"""async def main():
+    start = time.time()
 
-generator = Generator()
+    generator = Generator()
 
-print(generator.generate_activities("London"))
+    print(await generator.generate_facts("London", num=3))
 
-print(f"Model took {time.time() - start} seconds to run.")"""
+    print(f"Model took {time.time() - start} seconds to run.")
+
+asyncio.run(main())"""
