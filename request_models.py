@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from generation_models import FullItinerary
 
 
 class ActivityRequest(BaseModel):
@@ -16,4 +17,6 @@ class Preferences(BaseModel):
 
 class ItineraryRequest(BaseModel):
     city: str
-    preferences: Preferences
+    preferences: Preferences = None
+    itinerary: FullItinerary = None
+    feedback: str = None

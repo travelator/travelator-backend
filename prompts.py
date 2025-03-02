@@ -1,3 +1,5 @@
+from generation_models import FullItinerary
+
 def get_group_prompt(group: str):
     if group == "solo":
         return "alone"
@@ -18,3 +20,13 @@ def get_uniqueness_prompt(uniqueness: int):
         return "The user is looking for hidden gems that are not commonly known by tourists"
     elif uniqueness == 4:
         return "The user is looking to fully live like a local and experience the city as a local would"
+    
+def itinerary_to_string(itinerary: FullItinerary):
+    itinerary_str = ""
+    for item in itinerary.itinerary:
+        json_item = item.model_dump()
+        itinerary_str += "<Itinerary Item>\n"
+        for key, value in json_item.items():
+            itinerary_str += f"{key}: {value}\n"
+        itinerary_str += "</Itinerary Item>\n"
+    return itinerary_str

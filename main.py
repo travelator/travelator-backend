@@ -81,6 +81,8 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     # Unpack request parameters
     city = request.city
     preferences = request.preferences
+    itinerary = request.itinerary
+    feedback = request.feedback
 
     # Look for cookie data on search parameters
     try:
@@ -94,7 +96,7 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
 
     # Get itinerary response and titles
     itinerary_response = generator.generate_itinerary(
-        city, timeOfDay, group, preferences=preferences, uniqueness=uni
+        city, timeOfDay, group, preferences=preferences, uniqueness=uni, prior_itinerary=itinerary, feedback=feedback
     )
     titles_dict = {item.id: item.imageTag for item in itinerary_response.itinerary}
 

@@ -72,7 +72,7 @@ class Generator:
 
     # Generate itinerary item details
     def generate_itinerary(
-        self, location, timeOfDay, group, uniqueness, preferences=None
+        self, location, timeOfDay, group, uniqueness, preferences=None, prior_itinerary=None, feedback=None
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
@@ -86,6 +86,13 @@ class Generator:
         else:
             preference_string = ""
 
+        if prior_itinerary is not None:
+            prior_itinerary_str = f"The user has already been shown the following itinerary:\n{prompts.itinerary_to_string(prior_itinerary)}"
+            if feedback is not None:
+                prior_itinerary_str += f"The user provided feedback on the itinerary: {feedback}. Update the itinerary based on the user's feedback. Keep as close as possible to the original itinerary as you can while addressing the user's feedback."
+        else:
+            prior_itinerary_str = ""
+
         # set prompting messages
         messages = [
             SystemMessage(
@@ -98,6 +105,7 @@ class Generator:
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
             ),
             SystemMessage(preference_string),
+            SystemMessage(prior_itinerary_str),
             HumanMessage(
                 f"Generate a full day itinerary for the user in the following location: {location}."
                 "Explicitly include travel steps in the itinerary. For example, the title of an activity step could be 'Take the tube from Waterloo to Oxford Circus'"
