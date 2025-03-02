@@ -18,7 +18,8 @@ CORS(app)
 llm = OpenAI(api_key=OPENAI_API_KEY)
 
 # Database setup
-engine = db.create_engine("sqlite:///database.db")  # Using SQLite for simplicity
+# Using SQLite for simplicity
+engine = db.create_engine("sqlite:///database.db")
 metadata = db.MetaData()
 activities_table = db.Table(
     "activities",

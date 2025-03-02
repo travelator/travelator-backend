@@ -43,25 +43,33 @@ class Generator:
         params = {
             "key": API_KEY,
             "q": location,
-            "aqi": "no"  # Exclude air quality data for a faster response
+            "aqi": "no",  # Exclude air quality data for a faster response
         }
 
         response = requests.get(url, params=params)
         data = response.json()
 
         if response.status_code != 200:
-            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"}
+            return {
+                "error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"
+            }
 
         return {
-            "description": data["current"]["condition"]["text"],  # Weather description
+            # Weather description
+            "description": data["current"]["condition"]["text"],
             "temperature": data["current"]["temp_c"],  # Temperature in Celsius
             "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
-            "wind_speed": data["current"]["wind_kph"]  # Wind speed in km/h
+            "wind_speed": data["current"]["wind_kph"],  # Wind speed in km/h
         }
 
     # Generate activities
     async def generate_activities(
-        self, location, titles_only=False, titles=None, timeOfDay=None, group=None
+        self,
+        location,
+        titles_only=False,
+        titles=None,
+        timeOfDay=None,
+        group=None,
     ):
         num_activities = 5
 
@@ -113,7 +121,9 @@ class Generator:
         if rain_level > 5:
             weather_note += " It is currently raining, so avoid outdoor activities."
         elif rain_level == 0:
-            weather_note += " The weather is clear, so outdoor activities are preferred."
+            weather_note += (
+                " The weather is clear, so outdoor activities are preferred."
+            )
 
         # Adjust preference string
         if preferences is not None:

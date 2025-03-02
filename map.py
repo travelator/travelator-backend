@@ -17,7 +17,7 @@ TAXI_FARES = {
 PUBLIC_TRANSIT_FARES = {
     "New York City": {"bus": 2.75, "subway": 2.75},
     "London": {"bus": 1.75, "subway": 2.40},
-    "San Francisco": {"bus": 3.00, "subway": 3.50}
+    "San Francisco": {"bus": 3.00, "subway": 3.50},
 }
 
 
@@ -29,7 +29,7 @@ def get_google_directions(origin, destination, mode="transit"):
         "destination": f"{destination[0]},{destination[1]}",
         "mode": mode,
         "departure_time": "now",
-        "key": GOOGLE_MAPS_API_KEY
+        "key": GOOGLE_MAPS_API_KEY,
     }
 
     response = requests.get(url, params=params)
@@ -57,19 +57,23 @@ def get_google_directions(origin, destination, mode="transit"):
                 transit_type = step["transit_details"]["line"]["vehicle"]["type"]
                 departure_time = step["transit_details"]["departure_time"]["text"]
 
-                transit_steps.append({
-                    "line": line_name,
-                    "type": transit_type,
-                    "departure": departure_time
-                })
+                transit_steps.append(
+                    {
+                        "line": line_name,
+                        "type": transit_type,
+                        "departure": departure_time,
+                    }
+                )
 
-        routes.append({
-            "polyline": decoded_polyline,
-            "duration": duration,
-            "summary": summary,  # ✅ Now always exists
-            "distance_km": distance_km,
-            "transit_steps": transit_steps
-        })
+        routes.append(
+            {
+                "polyline": decoded_polyline,
+                "duration": duration,
+                "summary": summary,  # ✅ Now always exists
+                "distance_km": distance_km,
+                "transit_steps": transit_steps,
+            }
+        )
 
     return routes
 
@@ -98,16 +102,24 @@ def create_itinerary_map(city, itinerary):
         start = itinerary[i]
         end = itinerary[i + 1]
 
-        for mode, color in [("driving", "red"), ("transit", "blue"), ("walking", "green")]:
+        for mode, color in [
+            ("driving", "red"),
+            ("transit", "blue"),
+            ("walking", "green"),
+        ]:
             route_data = get_google_directions(start["location"], end["location"], mode)
             if route_data:
                 route = route_data[0]
                 layer_name = f"{mode.capitalize()} | {start['name']} → {end['name']}"
 
                 if layer_name not in route_layers:
-                    route_layers[layer_name] = folium.FeatureGroup(name=layer_name, overlay=True)
+                    route_layers[layer_name] = folium.FeatureGroup(
+                        name=layer_name, overlay=True
+                    )
 
-                folium.PolyLine(route["polyline"], color=color, weight=3.5).add_to(route_layers[layer_name])
+                folium.PolyLine(route["polyline"], color=color, weight=3.5).add_to(
+                    route_layers[layer_name]
+                )
 
                 # **Styled Popup**
                 popup_info = f"""
@@ -127,9 +139,11 @@ def create_itinerary_map(city, itinerary):
                     """
 
                     for step in route["transit_steps"]:
-                        transit_icon = "🚍 Bus" if step["type"] == "BUS" else "🚇 Subway"
+                        transit_icon = (
+                            "🚍 Bus" if step["type"] == "BUS" else "🚇 Subway"
+                        )
                         popup_info += f"""
-                        <br>{transit_icon}: <b>{step['line']}</b> 
+                        <br>{transit_icon}: <b>{step['line']}</b>
                         (Departs at {step['departure']})
                         """
 
@@ -139,9 +153,11 @@ def create_itinerary_map(city, itinerary):
 
                 popup_info += "</div>"
 
-                folium.Marker(route["polyline"][len(route["polyline"]) // 2],
-                              popup=folium.Popup(popup_info, max_width=300),
-                              icon=folium.Icon(color=color, icon="info-sign")).add_to(route_layers[layer_name])
+                folium.Marker(
+                    route["polyline"][len(route["polyline"]) // 2],
+                    popup=folium.Popup(popup_info, max_width=300),
+                    icon=folium.Icon(color=color, icon="info-sign"),
+                ).add_to(route_layers[layer_name])
 
     for layer in route_layers.values():
         layer.add_to(itinerary_map)
@@ -158,7 +174,7 @@ def main():
         {"name": "Empire State Building", "location": [40.748817, -73.985428]},
         {"name": "Times Square", "location": [40.758896, -73.985130]},
         {"name": "Brooklyn Bridge", "location": [40.706086, -73.996864]},
-        {"name": "Statue of Liberty", "location": [40.689247, -74.044502]}
+        {"name": "Statue of Liberty", "location": [40.689247, -74.044502]},
     ]
 
     itinerary_map = create_itinerary_map(city, itinerary)
