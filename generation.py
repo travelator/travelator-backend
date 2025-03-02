@@ -7,11 +7,8 @@ from generation_models import (
     ItineraryItem,
     SimpleItineraryItem,
     ItinerarySummary,
-    Facts,
 )
 import asyncio
-from typing import List
-import prompts
 import os
 import requests
 
@@ -38,7 +35,7 @@ class Generator:
         Fetches current weather conditions for a given location using WeatherAPI.
         """
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
-        url = f"http://api.weatherapi.com/v1/current.json"
+        url = "http://api.weatherapi.com/v1/current.json"
 
         params = {
             "key": API_KEY,
