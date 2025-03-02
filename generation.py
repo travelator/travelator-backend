@@ -10,7 +10,6 @@ from generation_models import (
     Facts,
 )
 import asyncio
-from typing import List
 import prompts
 
 load_dotenv()

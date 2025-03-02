@@ -129,14 +129,5 @@ async def get_facts(location: str, num: int):
 
     return {"facts": facts}
 
-
-@app.get("/single_fact")
-async def get_facts(location: str, num: int):
-    # Get facts for the location
-    facts = await generator.generate_facts(location, num)
-
-    return {"facts": facts}
-
-
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
