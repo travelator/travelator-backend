@@ -52,9 +52,14 @@ async def get_activities(request: ActivityRequest, response: Response):
         samesite="None",
     )
 
-    # Activity titles is a list of string representing different activity titles
+    # Activity titles is a list of string representing different activity
+    # titles
     activity_titles = await generator.generate_activities(
-        city, titles_only=True, timeOfDay=timeOfDay, group=group, uniqueness=uni
+        city,
+        titles_only=True,
+        timeOfDay=timeOfDay,
+        group=group,
+        uniqueness=uni,
     )
     titles_dict = {item["id"]: item["title"] for item in activity_titles}
 
@@ -87,7 +92,7 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     # Look for cookie data on search parameters
     try:
         cookie_data = json.loads(searchConfig)
-    except:
+    except BaseException:
         cookie_data = {}
 
     timeOfDay = cookie_data.get("timeOfDay", None)

@@ -1,4 +1,12 @@
-from flask import Blueprint, request, redirect, render_template, url_for, flash, session
+from flask import (
+    Blueprint,
+    request,
+    redirect,
+    render_template,
+    url_for,
+    flash,
+    session,
+)
 from app.models import User
 from app.database import db_session
 from werkzeug.security import generate_password_hash, check_password_hash

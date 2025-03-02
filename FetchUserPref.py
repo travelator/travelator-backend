@@ -69,7 +69,11 @@ if __name__ == "__main__":
         "true": ["big ben", "hyde park", "london eye"],
         "false": ["london bridge", "tower of london"],
     }
-    preferences = {"location": "london", "budget": "£1000", "trip_duration": "2 days"}
+    preferences = {
+        "location": "london",
+        "budget": "£1000",
+        "trip_duration": "2 days",
+    }
 
     r = get_prompt(choices, preferences)
     print(r)
