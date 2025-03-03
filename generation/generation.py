@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from dotenv import load_dotenv
-from generation_models import (
+from .generation_models import (
     ActivityList,
     ActivityTitles,
     ItineraryItem,
@@ -10,7 +10,7 @@ from generation_models import (
     Facts,
 )
 import asyncio
-import prompts
+from .prompts import Prompts
 
 load_dotenv()
 
@@ -46,14 +46,14 @@ class Generator:
 
         if group is not None:
             human_prompt += (
-                f" The user is travelling {prompts.get_group_prompt(group)}."
+                f" The user is travelling {Prompts.get_group_prompt(group)}."
             )
 
         if timeOfDay is not None:
             human_prompt += f" The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}."
 
         if uniqueness is not None:
-            human_prompt += prompts.get_uniqueness_prompt(uniqueness)
+            human_prompt += Prompts.get_uniqueness_prompt(uniqueness)
 
         # set prompting messages
         messages = [
@@ -93,7 +93,7 @@ class Generator:
             preference_string = ""
 
         if prior_itinerary is not None:
-            prior_itinerary_str = f"The user has already been shown the following itinerary:\n{prompts.itinerary_to_string(prior_itinerary)}"
+            prior_itinerary_str = f"The user has already been shown the following itinerary:\n{Prompts.itinerary_to_string(prior_itinerary)}"
             if feedback is not None:
                 prior_itinerary_str += f"The user provided feedback on the itinerary: {feedback}. Update the itinerary based on the user's feedback. Keep as close as possible to the original itinerary as you can while addressing the user's feedback."
         else:
@@ -104,9 +104,9 @@ class Generator:
             SystemMessage(
                 "You are an AI travel agent that needs to suggest possible itinerary activities to a user based on a given location."
                 "You must provide all details in the schema requested."
-                f"The user is travelling {prompts.get_group_prompt(group)}."
+                f"The user is travelling {Prompts.get_group_prompt(group)}."
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
-                f"{prompts.get_uniqueness_prompt(uniqueness)}"
+                f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
             ),
@@ -138,7 +138,7 @@ class Generator:
                 f"You are an AI travel agent preparing an itinerary for a user travelling to {location}."
                 "Your writing style should match a travel blogger, it should be casual."
                 "You must provide full details in the schema requested for the given activity."
-                f"Bear in mind the user is travelling {prompts.get_group_prompt(group)}"
+                f"Bear in mind the user is travelling {Prompts.get_group_prompt(group)}"
             ),
             HumanMessage(
                 f"Generate full details for the following activity: {itineraryItem.title}"

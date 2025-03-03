@@ -1,20 +1,13 @@
 import uvicorn
-from fastapi import FastAPI, Response, Cookie
-from generation import Generator
-from request_models import ActivityRequest, ItineraryRequest
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from image_searcher import get_n_random_places
-from datetime import timedelta
-import json
 from dotenv import load_dotenv
 import os
-import asyncio
+from routes import activities, itinerary, facts
 
 load_dotenv()
 
 app = FastAPI()
-generator = Generator()
-environment = os.getenv("environment", "dev")
 
 # Allow CORS for the React app's origin
 app.add_middleware(
@@ -30,7 +23,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Include routers
+app.include_router(activities.router)
+app.include_router(itinerary.router)
+app.include_router(facts.router)
 
+"""
 @app.post("/activities")
 async def get_activities(request: ActivityRequest, response: Response):
     # Unpack request parameters
@@ -127,7 +125,7 @@ async def get_facts(location: str, num: int):
     # Get facts for the location
     facts = await generator.generate_facts(location, num)
 
-    return {"facts": facts}
+    return {"facts": facts}"""
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

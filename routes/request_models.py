@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from generation_models import FullItinerary
+from generation.generation_models import FullItinerary
 
 
 class ActivityRequest(BaseModel):
