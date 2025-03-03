@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 
 class Theme(str, Enum):
@@ -83,7 +83,9 @@ class ItineraryItem(BaseModel):
     requires_booking: bool = Field(
         description="Indicates if the item requires booking."
     )
-    booking_url: str = Field(description="URL for booking the itinerary item.")
+    booking_url: Optional[str] = Field(
+        description="URL for booking the itinerary item."
+    )
     image_link: List[str] = Field(
         description="URLs of images representing the activity. Do not generate."
     )
@@ -91,6 +93,12 @@ class ItineraryItem(BaseModel):
     id: int = Field(description="Unique identifier for the itinerary item.")
     latitude: float = Field(description="Latitude position of the given activity.")
     longitude: float = Field(description="Longitude position of the given activity.")
+
+
+class FullItinerary(BaseModel):
+    itinerary: list[ItineraryItem] = Field(
+        description="A full day itinerary for the given location"
+    )
 
 
 class SimpleItineraryItem(BaseModel):
@@ -107,12 +115,6 @@ class SimpleItineraryItem(BaseModel):
 
 class ActivityList(BaseModel):
     activities: list[Activity] = Field(description="List of activities.")
-
-
-class FullItinerary(BaseModel):
-    itinerary: list[ItineraryItem] = Field(
-        description="A full day itinerary for the given location"
-    )
 
 
 class ItinerarySummary(BaseModel):

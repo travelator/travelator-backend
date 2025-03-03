@@ -45,7 +45,8 @@ async def run_perplexity_query(perplexity_chain, query):
     """
     # Create a message with the query
     system_message = SystemMessage(
-        content="If there is no link to return, just reply with None. Do not add any comments as I will turn this output into a dictionary."
+        "Try to find a relevant website link for the given activity. If there is really no link to return, then as a last response you may return None. Do not add any comments as I will turn this output into a dictionary."
+        "It is essential that you provide only a single booking link that the user can click directly on. You Must Not add any additional text."
     )
     human_message = HumanMessage(content=query)
 
@@ -56,9 +57,9 @@ async def run_perplexity_query(perplexity_chain, query):
     return response.content
 
 
-async def get_activity_links(titles_set):
+async def get_activity_links(titles_set, location, try_again=True):
     """
-    Get booking links for activities using Perplexity API.
+    Get links to the relevant website for each of these activities using Perplexity API.
     Returns results as a dictionary where each activity is a key and its link is the value.
 
     Args:
@@ -70,7 +71,8 @@ async def get_activity_links(titles_set):
     perplexity_chain = setup_perplexity_chain()
 
     user_input = (
-        "replace each value in this dictionary with a ideally a booking link, otherwise a website link, related to that activity and return only the dictionary with no other text as a string: "
+        f"The user is planning an itinerary for a trip to {location}."
+        "Replace each value in this dictionary with a website link for the given activity if you can find it, and return only the dictionary with no other text as a string. "
         + str(titles_set)
     )
     perplexity_output = await run_perplexity_query(perplexity_chain, user_input)
@@ -84,7 +86,11 @@ async def get_activity_links(titles_set):
         if isinstance(result_dict, dict):
             return result_dict
         else:
-            return None
+            if try_again:
+                # If it fails the first time, try again
+                return await get_activity_links(titles_set, location, try_again=False)
+            else:
+                return None
     except (ValueError, SyntaxError):
         # If there's an error during evaluation, return None
         return None
