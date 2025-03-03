@@ -13,6 +13,7 @@ import asyncio
 from .prompts import Prompts
 import os
 import requests
+from datetime import datetime
 
 load_dotenv()
 
@@ -25,31 +26,41 @@ class Generator:
     @staticmethod
     def get_weather(location):
         """
-        Fetches current weather conditions for a given location using WeatherAPI.
+        Fetches hourly weather forecast for a given location using WeatherAPI.
         """
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
-        if not API_KEY:
-            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
-        url = "http://api.weatherapi.com/v1/current.json"
+        url = "http://api.weatherapi.com/v1/forecast.json"
 
         params = {
             "key": API_KEY,
             "q": location,
-            "aqi": "no"  # Exclude air quality data for a faster response
+            "aqi": "no",
+            "days": 1,  # Get 24-hour forecast
         }
 
         response = requests.get(url, params=params)
         data = response.json()
 
-        if response.status_code != 200:
-            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"}
+        if response.status_code != 200 or "forecast" not in data:
+            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unexpected API response')}"}
 
-        return {
-            "description": data["current"]["condition"]["text"],  # Weather description
-            "temperature": data["current"]["temp_c"],  # Temperature in Celsius
-            "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
-            "wind_speed": data["current"]["wind_kph"]  # Wind speed in km/h
-        }
+        # Extract hourly weather data
+        hourly_data = data["forecast"]["forecastday"][0]["hour"]
+        weather_dict = {}
+
+        for hour_entry in hourly_data:
+            hour_time = hour_entry["time"]
+            hour_weather = {
+                "icon": f"https:{hour_entry['condition']['icon']}",  # Ensures valid URL
+                "description": hour_entry["condition"]["text"],
+                "temperature": hour_entry["temp_c"],
+                "rain": hour_entry["precip_mm"],
+                "wind_speed": hour_entry["wind_kph"],
+            }
+            # Store weather details using time as key
+            weather_dict[hour_time] = hour_weather
+
+        return weather_dict  # Returns hourly weather data indexed by time
 
     # Generate activities
     async def generate_activities(
@@ -103,27 +114,25 @@ class Generator:
 
     # Generate itinerary item details
     def generate_itinerary(
-        self,
-        location,
-        timeOfDay,
-        group,
-        uniqueness,
-        preferences=None,
-        prior_itinerary=None,
-        feedback=None,
+            self,
+            location,
+            timeOfDay,
+            group,
+            uniqueness,
+            preferences=None,
+            prior_itinerary=None,
+            feedback=None,
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
-        # Fetch weather data
+        # Fetch hourly weather data
         weather_data = self.get_weather(location)
+
         if "error" in weather_data:
             weather_string = "Weather data is currently unavailable."
+            weather_data = {}  # Avoid breaking code later
         else:
-            weather_string = (
-                f"The current weather in {location} is {weather_data['description']} with a temperature of "
-                f"{weather_data['temperature']}°C. There is {weather_data['rain']}mm of rainfall and the wind speed is "
-                f"{weather_data['wind_speed']} km/h. Adjust outdoor activity recommendations accordingly."
-            )
+            weather_string = "Weather data is included per event."
 
         if preferences is not None:
             preference_string = (
@@ -163,6 +172,27 @@ class Generator:
         ]
 
         response = structured_model.invoke(messages)
+
+        # **Integrate Weather Data into Itinerary Response**
+        for event in response.itinerary:
+            # Convert event time to nearest hour format: 'YYYY-MM-DD HH:00'
+            event_time_obj = datetime.strptime(event.start_time, "%Y-%m-%d %H:%M")
+            event_hour_str = event_time_obj.strftime("%Y-%m-%d %H:00")
+
+            weather_info = weather_data.get(event_hour_str, None)
+
+            if weather_info:
+                event.weather = {
+                    "icon": weather_info["icon"],  # Icon URL
+                    "description": weather_info["description"],  # Weather condition
+                    "temperature": weather_info["temperature"],  # Temperature
+                }
+            else:
+                event.weather = {
+                    "icon": None,
+                    "description": "Weather data unavailable",
+                    "temperature": None,
+                }
 
         return response
 
