@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-from routes import activities, itinerary, facts
+from routes import activities, itinerary, facts, swap
 
 load_dotenv()
 
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(activities.router)
 app.include_router(itinerary.router)
 app.include_router(facts.router)
+app.include_router(swap.router)
 
 """
 @app.post("/activities")
