@@ -36,20 +36,22 @@ class Generator:
         params = {
             "key": API_KEY,
             "q": location,
-            "aqi": "no"  # Exclude air quality data for a faster response
+            "aqi": "no",  # Exclude air quality data for a faster response
         }
 
         response = requests.get(url, params=params)
         data = response.json()
 
         if response.status_code != 200:
-            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"}
+            return {
+                "error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"
+            }
 
         return {
             "description": data["current"]["condition"]["text"],  # Weather description
             "temperature": data["current"]["temp_c"],  # Temperature in Celsius
             "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
-            "wind_speed": data["current"]["wind_kph"]  # Wind speed in km/h
+            "wind_speed": data["current"]["wind_kph"],  # Wind speed in km/h
         }
 
     # Generate activities

@@ -3,7 +3,6 @@ from .request_models import SwapRequest
 from generation.generation import Generator
 from generation.utils import get_activity_from_id, swap_activity
 from generation.image_searcher import get_n_random_places
-import asyncio
 import json
 
 router = APIRouter()

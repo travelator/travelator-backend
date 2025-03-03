@@ -21,7 +21,7 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     # Look for cookie data on search parameters
     try:
         cookie_data = json.loads(searchConfig)
-    except:
+    except json.JSONDecodeError:
         cookie_data = {}
 
     timeOfDay = cookie_data.get("timeOfDay", None)
@@ -53,6 +53,6 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
         item["booking_url"] = activity_links.get(item["id"], None)
 
     # ensure item sorted by start
-    detailed_itinerary.sort(key=lambda item: item["start"])
+    # detailed_itinerary.sort(key=lambda item: item["start"])
 
     return {"itinerary": detailed_itinerary}
