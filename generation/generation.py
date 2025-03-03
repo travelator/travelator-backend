@@ -11,6 +11,8 @@ from .generation_models import (
 )
 import asyncio
 from .prompts import Prompts
+import os
+import requests
 
 load_dotenv()
 
@@ -18,6 +20,36 @@ load_dotenv()
 class Generator:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini")
+
+    # Fetch Live weather data
+    @staticmethod
+    def get_weather(location):
+        """
+        Fetches current weather conditions for a given location using WeatherAPI.
+        """
+        API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
+        if not API_KEY:
+            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
+        url = "http://api.weatherapi.com/v1/current.json"
+
+        params = {
+            "key": API_KEY,
+            "q": location,
+            "aqi": "no"  # Exclude air quality data for a faster response
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        if response.status_code != 200:
+            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"}
+
+        return {
+            "description": data["current"]["condition"]["text"],  # Weather description
+            "temperature": data["current"]["temp_c"],  # Temperature in Celsius
+            "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
+            "wind_speed": data["current"]["wind_kph"]  # Wind speed in km/h
+        }
 
     # Generate activities
     async def generate_activities(
@@ -82,6 +114,17 @@ class Generator:
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
+        # Fetch weather data
+        weather_data = self.get_weather(location)
+        if "error" in weather_data:
+            weather_string = "Weather data is currently unavailable."
+        else:
+            weather_string = (
+                f"The current weather in {location} is {weather_data['description']} with a temperature of "
+                f"{weather_data['temperature']}°C. There is {weather_data['rain']}mm of rainfall and the wind speed is "
+                f"{weather_data['wind_speed']} km/h. Adjust outdoor activity recommendations accordingly."
+            )
+
         if preferences is not None:
             preference_string = (
                 f"The user has already been shown some activities that they could like or dislike within the given location."
@@ -109,6 +152,7 @@ class Generator:
                 f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
+                f"\n\n{weather_string}"
             ),
             SystemMessage(preference_string),
             SystemMessage(prior_itinerary_str),
