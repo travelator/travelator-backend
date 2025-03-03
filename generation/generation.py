@@ -30,7 +30,7 @@ class Generator:
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
         if not API_KEY:
             raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
-        url = f"http://api.weatherapi.com/v1/current.json"
+        url = "http://api.weatherapi.com/v1/current.json"
 
         params = {
             "key": API_KEY,
