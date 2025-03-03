@@ -8,6 +8,7 @@ from .generation_models import (
     SimpleItineraryItem,
     ItinerarySummary,
     Facts,
+    FullItinerary,
 )
 import asyncio
 from .prompts import Prompts
@@ -61,6 +62,7 @@ class Generator:
                 "You are an AI travel agent that needs to suggest possible itinerary activities to a user based on a given location."
                 "Your writing style should match a travel blogger, it should be casual."
                 "You must provide all details in the schema requested."
+                "Wherever possible, you must include specific venues (e.g. 'Dinner at the Grove' and not just 'Dinner at a local restaurant')"
             ),
             HumanMessage(human_prompt),
         ]
@@ -96,6 +98,8 @@ class Generator:
             prior_itinerary_str = f"The user has already been shown the following itinerary:\n{Prompts.itinerary_to_string(prior_itinerary)}"
             if feedback is not None:
                 prior_itinerary_str += f"The user provided feedback on the itinerary: {feedback}. Update the itinerary based on the user's feedback. Keep as close as possible to the original itinerary as you can while addressing the user's feedback."
+                prior_itinerary_str += "Above all, you must make sure your response addresses the user's feedback - remove and change items as needed to achieve this."
+
         else:
             prior_itinerary_str = ""
 
@@ -108,6 +112,7 @@ class Generator:
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
                 f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
+                "Wherever possible, you must include specific venues (e.g. 'Dinner at the Grove' and not just 'Dinner at a local restaurant')"
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
             ),
             SystemMessage(preference_string),
@@ -162,6 +167,45 @@ class Generator:
         ]
         responses = await asyncio.gather(*tasks)
         return responses
+
+    async def swap_activity(
+        self,
+        activity: str,
+        location: str,
+        group: str,
+        uniqueness: int,
+        itinerary: FullItinerary,
+        feedback: str,
+    ) -> ItineraryItem:
+        # set model
+        structured_model = self.llm.with_structured_output(ItineraryItem)
+
+        prior_itinerary_str = (
+            f"The user is planning has been shown the following itinerary:\n{Prompts.itinerary_to_string(itinerary)}"
+            "The user now wants to swap out a single activity on the itinerary for something else."
+            f"You will be told what activity to swap, and you should swap it considering the following feedback: {feedback}"
+        )
+
+        # set prompting messages
+        messages = [
+            SystemMessage(
+                f"You are an AI travel agent preparing an itinerary for a user travelling to {location}."
+                "The user has already been provided with an itinerary and is now fine tuning it."
+                "The user now wants to swap out a single activity on the itinerary for something else."
+                "You must propose an alternative activity to the user with the exact same timings, also considering that it should be geographically near the current activity."
+                f"The user is travelling {Prompts.get_group_prompt(group)}."
+                f"{Prompts.get_uniqueness_prompt(uniqueness)}"
+                "Provide your response as a new activity with the same timings."
+                f"Above all, you must make sure your response takes into account the following user feedback: {feedback}."
+            ),
+            SystemMessage(prior_itinerary_str),
+            HumanMessage(
+                f"Generate a new activity to replace the following activity: {Prompts.activity_to_string(activity)}."
+            ),
+        ]
+
+        response = await structured_model.ainvoke(messages)
+        return response
 
     async def generate_facts(self, location: str, num: int = 1):
         """Generates some interesting facts about a given location"""

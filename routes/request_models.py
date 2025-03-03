@@ -20,3 +20,10 @@ class ItineraryRequest(BaseModel):
     preferences: Preferences = None
     itinerary: FullItinerary = None
     feedback: str = None
+
+
+class SwapRequest(BaseModel):
+    city: str
+    activityId: int
+    itinerary: FullItinerary
+    feedback: str = None

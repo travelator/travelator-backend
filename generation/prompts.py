@@ -1,4 +1,4 @@
-from .generation_models import FullItinerary
+from .generation_models import FullItinerary, ItineraryItem
 
 
 class Prompts:
@@ -8,8 +8,10 @@ class Prompts:
             return "alone"
         elif group == "couples":
             return "as a couple with their partner"
-        else:
+        elif group is not None:
             return f"with {group}"
+        else:
+            return "No group specified"
 
     @staticmethod
     def get_uniqueness_prompt(uniqueness: int) -> str:
@@ -23,6 +25,8 @@ class Prompts:
             return "The user is looking for hidden gems that are not commonly known by tourists"
         elif uniqueness == 4:
             return "The user is looking to fully live like a local and experience the city as a local would"
+        else:
+            return "No uniqueness specified"
 
     @staticmethod
     def itinerary_to_string(itinerary: FullItinerary) -> str:
@@ -34,3 +38,11 @@ class Prompts:
                 itinerary_str += f"{key}: {value}\n"
             itinerary_str += "</Itinerary Item>\n"
         return itinerary_str
+
+    @staticmethod
+    def activity_to_string(activity: ItineraryItem) -> str:
+        activity_str = ""
+        json_item = activity.model_dump()
+        for key, value in json_item.items():
+            activity_str += f"{key}: {value}\n"
+        return activity_str
