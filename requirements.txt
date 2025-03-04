@@ -15,8 +15,8 @@ jiter==0.8.2
 jsonpatch==1.33
 jsonpointer==3.0.0
 langchain-core==0.3.39
-langchain-openai==0.3.6
-langsmith==0.3.10
+langchain-openai==0.3.7
+langsmith  # Remove the version constraint
 lxml==5.3.1
 openai==1.64.0
 orjson==3.10.15
@@ -38,3 +38,4 @@ typing_extensions==4.12.2
 urllib3==2.3.0
 uvicorn==0.34.0
 zstandard==0.23.0
+pytest==8.3.5

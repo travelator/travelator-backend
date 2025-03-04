@@ -29,8 +29,10 @@ class Generator:
         Fetches hourly weather forecast for a given location using WeatherAPI.
         """
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
-        url = "http://api.weatherapi.com/v1/forecast.json"
+        if not API_KEY:
+            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")  # ✅ Raise before making request
 
+        url = "http://api.weatherapi.com/v1/forecast.json"
         params = {
             "key": API_KEY,
             "q": location,
@@ -44,20 +46,18 @@ class Generator:
         if response.status_code != 200 or "forecast" not in data:
             return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unexpected API response')}"}
 
-        # Extract hourly weather data
         hourly_data = data["forecast"]["forecastday"][0]["hour"]
         weather_dict = {}
 
         for hour_entry in hourly_data:
             hour_time = hour_entry["time"]
             hour_weather = {
-                "icon": f"https:{hour_entry['condition']['icon']}",  # Ensures valid URL
+                "icon": f"https:{hour_entry['condition']['icon']}",
                 "description": hour_entry["condition"]["text"],
                 "temperature": hour_entry["temp_c"],
                 "rain": hour_entry["precip_mm"],
                 "wind_speed": hour_entry["wind_kph"],
             }
-            # Store weather details using time as key
             weather_dict[hour_time] = hour_weather
 
         return weather_dict  # Returns hourly weather data indexed by time
@@ -160,6 +160,8 @@ class Generator:
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
                 f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
+                "When suggesting restaurants, you MUST provide specific restaurant names, cuisine type, and a brief description."
+                "Example: Instead of 'Have a rooftop dinner,' say 'Enjoy an Italian fine dining experience at Aqua Shard, a rooftop restaurant with panoramic views of London.'"
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
                 f"\n\n{weather_string}"
             ),
