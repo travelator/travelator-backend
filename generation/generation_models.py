@@ -86,13 +86,19 @@ class ItineraryItem(BaseModel):
     booking_url: Optional[str] = Field(
         description="URL for booking the itinerary item."
     )
+    weather: Optional[str] = Field(
+        description="weather conditions for the given activity. Do not generate."
+    )
+    temperature: Optional[int] = Field(
+        description="temperature in celsius for the given activity. Do not generate."
+    )
     image_link: List[str] = Field(
         description="URLs of images representing the activity. Do not generate."
     )
     duration: int = Field(description="Duration of the itinerary item in minutes.")
     id: int = Field(description="Unique identifier for the itinerary item.")
-    latitude: float = Field(description="Latitude position of the given activity.")
-    longitude: float = Field(description="Longitude position of the given activity.")
+    latitude: Optional[float] = Field(description="Latitude position of the given activity.")
+    longitude: Optional[float] = Field(description="Longitude position of the given activity.")
 
 
 class FullItinerary(BaseModel):
