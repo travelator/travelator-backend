@@ -2,7 +2,6 @@ import os
 from langchain_community.chat_models import ChatPerplexity
 from langchain.schema import HumanMessage, SystemMessage
 from dotenv import load_dotenv
-import asyncio
 import ast
 
 
