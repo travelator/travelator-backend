@@ -97,8 +97,12 @@ class ItineraryItem(BaseModel):
     )
     duration: int = Field(description="Duration of the itinerary item in minutes.")
     id: int = Field(description="Unique identifier for the itinerary item.")
-    latitude: Optional[float] = Field(description="Latitude position of the given activity.")
-    longitude: Optional[float] = Field(description="Longitude position of the given activity.")
+    latitude: Optional[float] = Field(
+        description="Latitude position of the given activity."
+    )
+    longitude: Optional[float] = Field(
+        description="Longitude position of the given activity."
+    )
 
 
 class FullItinerary(BaseModel):
