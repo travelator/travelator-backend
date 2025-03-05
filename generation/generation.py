@@ -24,20 +24,47 @@ class Generator:
 
     # Fetch Live weather data
     @staticmethod
-    def get_weather(location):
+    def get_weather(location, date=None):
         """
-        Fetches hourly weather forecast for a given location using WeatherAPI.
+        Fetches hourly weather forecast for a given location and date using WeatherAPI.
+
+        Args:
+            location (str): The location to get weather for
+            date (str, optional): The date in YYYY-MM-DD format. Defaults to None (current day).
+
+        Returns:
+            list: List of dictionaries containing hourly weather data from 7am to midnight
+                  Each dict has keys: time (str), weather (str), temperature (int)
         """
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
         if not API_KEY:
-            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")  # ✅ Raise before making request
+            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
 
         url = "http://api.weatherapi.com/v1/forecast.json"
+
+        # If a date is provided, we need to calculate days in the future
+        # WeatherAPI allows forecast up to 14 days
+        days_param = 1
+        if date:
+            # Calculate days difference between today and requested date
+            today = datetime.now().date()
+            requested_date = datetime.strptime(date, "%Y-%m-%d").date()
+            days_diff = (requested_date - today).days
+
+            # Ensure the requested date is within API limits (0-14 days)
+            if days_diff < 0:
+                return {"error": "Cannot retrieve weather for past dates"}
+            elif days_diff > 14:
+                return {"error": "Weather forecast is only available up to 14 days in the future"}
+            else:
+                days_param = days_diff + 1  # Need at least this many days to include the requested date
+
         params = {
             "key": API_KEY,
             "q": location,
             "aqi": "no",
-            "days": 1,  # Get 24-hour forecast
+            "days": days_param,
+            "hour": "0-23"  # Get all hours
         }
 
         response = requests.get(url, params=params)
@@ -46,21 +73,35 @@ class Generator:
         if response.status_code != 200 or "forecast" not in data:
             return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unexpected API response')}"}
 
-        hourly_data = data["forecast"]["forecastday"][0]["hour"]
-        weather_dict = {}
+        # Get the forecast for the requested date (or today if no date)
+        target_date = date if date else datetime.now().strftime("%Y-%m-%d")
 
+        # Find the forecast for the target date
+        forecast_day = None
+        for day in data["forecast"]["forecastday"]:
+            if day["date"] == target_date:
+                forecast_day = day
+                break
+
+        if not forecast_day:
+            return {"error": f"Weather forecast for {target_date} not available"}
+
+        hourly_data = forecast_day["hour"]
+
+        # Filter hours between 7am and midnight
+        filtered_hours = []
         for hour_entry in hourly_data:
-            hour_time = hour_entry["time"]
-            hour_weather = {
-                "icon": f"https:{hour_entry['condition']['icon']}",
-                "description": hour_entry["condition"]["text"],
-                "temperature": hour_entry["temp_c"],
-                "rain": hour_entry["precip_mm"],
-                "wind_speed": hour_entry["wind_kph"],
-            }
-            weather_dict[hour_time] = hour_weather
+            hour_time_obj = datetime.strptime(hour_entry["time"], "%Y-%m-%d %H:%M")
+            hour = hour_time_obj.hour
 
-        return weather_dict  # Returns hourly weather data indexed by time
+            if 7 <= hour <= 23:  # From 7am to midnight (23:00)
+                filtered_hours.append({
+                    "time": hour_time_obj.strftime("%H:%M"),  # Format as HH:MM
+                    "weather": hour_entry["condition"]["text"],
+                    "temperature": int(round(hour_entry["temp_c"]))  # Round to nearest integer
+                })
+
+        return filtered_hours
 
     # Generate activities
     async def generate_activities(
