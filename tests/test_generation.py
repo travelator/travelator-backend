@@ -25,7 +25,6 @@ os.environ["WEATHERAPI_KEY"] = "test_api_key"
 
 generator = Generator()
 
-
 # Mocking API requests weather requests
 def mocked_weather_api(*args, **kwargs):
     class MockResponse:
@@ -185,12 +184,10 @@ def test_get_weather_with_date(mock_get):
     assert "07:00" in times  # 7am should be included
     assert "23:00" in times  # Midnight should be included
 
-
 def test_get_weather_error():
     with patch("requests.get", return_value=mocked_weather_api(params={"q": "Unknown"})):
         weather_data = generator.get_weather("Unknown")
         assert "error" in weather_data
-
 
 def test_get_weather_error_scenarios():
     """Test get_weather method with error scenarios"""
@@ -220,7 +217,6 @@ def test_get_weather_error_scenarios():
 
         result = generator.get_weather("London")
         assert "error" in result
-
 
 # Mocking LLM interactions
 @pytest.mark.asyncio
@@ -252,7 +248,6 @@ def test_activity_model():
     )
     assert activity.title == "Visit the Tower of London"
 
-
 def test_itinerary_item_model():
     itinerary_item = ItineraryItem(
         title="Take the Tube to Oxford Circus",
@@ -273,7 +268,6 @@ def test_itinerary_item_model():
     assert itinerary_item.transport is True
     assert itinerary_item.transportMode == TransportMode.TUBE
 
-
 def test_simple_itinerary_item_model():
     simple_item = SimpleItineraryItem(
         title="Lunch at Dishoom",
@@ -284,7 +278,6 @@ def test_simple_itinerary_item_model():
     )
     assert simple_item.title == "Lunch at Dishoom"
     assert simple_item.imageTag == "Dishoom restaurant"
-
 
 @pytest.mark.asyncio
 async def test_generate_itinerary():
@@ -322,7 +315,6 @@ def test_itinerary_summary_model():
         id=102
     )])
     assert len(summary.itinerary) == 1
-
 
 @pytest.mark.asyncio
 async def test_generate_itinerary_details():
@@ -409,7 +401,6 @@ async def test_get_n_random_places():
 def test_get_group_prompt():
     result = Prompts.get_group_prompt("family")
     assert "family" in result.lower()
-
 
 def test_facts_model():
     facts = Facts(facts=["London has over 170 museums."])
@@ -536,7 +527,6 @@ async def test_generate_itinerary_details_error_handling():
         with pytest.raises(Exception):
             await generator.generate_itinerary_details(mock_itinerary, "TestLocation", "solo")
 
-
 @pytest.mark.asyncio
 async def test_generate_facts_boundary_cases():
     """Test generate_facts with different num values."""
@@ -597,7 +587,6 @@ async def test_generate_activities_edge_cases():
             assert hasattr(result_full[0], 'title')
             assert hasattr(result_full[0], 'description')
 
-
 @pytest.mark.asyncio
 async def test_generate_itinerary_with_variations():
     """Test generate_itinerary with different scenarios"""
@@ -643,7 +632,6 @@ async def test_generate_itinerary_with_variations():
                 assert hasattr(item, 'end')
                 assert hasattr(item, 'id')
 
-
 @pytest.mark.asyncio
 async def test_generate_item_details_comprehensive():
     """Comprehensive test for generate_item_details"""
@@ -674,7 +662,6 @@ async def test_generate_item_details_comprehensive():
         assert 'transportMode' in result
         assert 'image_link' in result
 
-
 @pytest.mark.asyncio
 async def test_generate_facts_variations():
     """Test generate_facts with different inputs"""
@@ -693,7 +680,6 @@ async def test_generate_facts_variations():
         assert isinstance(facts, list)
         assert 1 <= len(facts) <= 5  # Ensure number of facts is within bounds
         assert all(isinstance(fact, str) for fact in facts)
-
 
 @pytest.mark.asyncio
 async def test_generate_activities_with_various_params():
@@ -763,7 +749,6 @@ async def test_generate_activities_with_time_of_day():
 
     assert isinstance(result, list)
     assert len(result) > 0
-
 
 if __name__ == "__main__":
     pytest.main()
