@@ -441,7 +441,7 @@ async def test_generate_item_details():
         assert result.theme == Theme.CULTURE
 
 def test_get_uniqueness_prompt():
-    result = Prompts.get_uniqueness_prompt(2)  
+    result = Prompts.get_uniqueness_prompt(2)
     assert isinstance(result, str)
     assert "off-the-beaten-path" in result.lower()
 @pytest.mark.asyncio
