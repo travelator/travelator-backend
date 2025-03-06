@@ -143,7 +143,6 @@ def mocked_weather_api(*args, **kwargs):
 
     return MockResponse({}, 400)
 
-
 @patch("requests.get", side_effect=mocked_weather_api)
 def test_get_weather(mock_get):
     # Test current date weather
@@ -229,7 +228,7 @@ async def test_generate_activities():
     # Mocked response
     mock_response = ActivityTitles(
         activities=[
-            ActivityTitleStruct(id=1, title="Visit the British Museum"),  # ✅ Use correct Pydantic model
+            ActivityTitleStruct(id=1, title="Visit the British Museum"), 
             ActivityTitleStruct(id=2, title="Explore Tower of London"),
         ]
     )
@@ -239,8 +238,7 @@ async def test_generate_activities():
         result = await generator.generate_activities("London", titles_only=True)
 
         assert isinstance(result, list)
-        assert result[0].title == "Visit the British Museum"  # ✅ Use dot notation
-
+        assert result[0].title == "Visit the British Museum"  
 
 # Testing models
 def test_activity_model():
@@ -263,8 +261,8 @@ def test_itinerary_item_model():
         end="2025-03-04 10:15",
         description="Ride the London Underground to Oxford Circus.",
         price=2.5,
-        theme=Theme.ADVENTURE,  # ✅ Use a valid theme
-        transportMode=TransportMode.TUBE,  # ✅ Also use the correct TransportMode enum
+        theme=Theme.ADVENTURE,  
+        transportMode=TransportMode.TUBE,  
         requires_booking=False,
         booking_url="",
         image_link=["https://example.com/tube.jpg"],
@@ -354,7 +352,6 @@ async def test_search_single_image():
     query = "London Skyline"
     key = "london"
 
-    # ✅ Mock DuckDuckGo Search Results
     mock_results = [
         {"image": "https://example.com/london1.jpg"},
         {"image": "https://example.com/london2.jpg"}
@@ -374,7 +371,6 @@ async def test_search_duckduckgo_images():
     queries = ["Eiffel Tower", "Colosseum"]
     keys = ["paris", "rome"]
 
-    # ✅ Mock DuckDuckGo Search Results
     mock_results = {
         "paris": ["https://example.com/eiffel1.jpg", "https://example.com/eiffel2.jpg"],
         "rome": ["https://example.com/colosseum1.jpg", "https://example.com/colosseum2.jpg"]
@@ -396,7 +392,6 @@ async def test_get_n_random_places():
         "2": "Statue of Liberty"
     }
 
-    # ✅ Mock DuckDuckGo Search
     mock_image_results = {
         "1": ["https://example.com/eiffel.jpg"],
         "2": ["https://example.com/statue.jpg"]
@@ -456,9 +451,9 @@ async def test_generate_item_details():
 
 
 def test_get_uniqueness_prompt():
-    result = Prompts.get_uniqueness_prompt(2)  # ✅ Use an integer (e.g., 2)
-    assert isinstance(result, str)  # ✅ Ensure it returns a string
-    assert "off-the-beaten-path" in result.lower()  # ✅ Check expected output
+    result = Prompts.get_uniqueness_prompt(2)  
+    assert isinstance(result, str)  
+    assert "off-the-beaten-path" in result.lower()  
 
 @pytest.mark.asyncio
 async def test_generate_facts():
@@ -762,8 +757,6 @@ async def test_generate_activities_with_various_params():
                     assert hasattr(result[0], 'title')
                     assert hasattr(result[0], 'description')
 
-
-# ✅ Test generate_activities with different timeOfDay
 @pytest.mark.asyncio
 async def test_generate_activities_with_time_of_day():
     result = await generator.generate_activities("Tokyo", titles_only=False, timeOfDay=["morning", "afternoon"])
