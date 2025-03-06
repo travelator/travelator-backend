@@ -1,4 +1,4 @@
-from .generation_models import FullItinerary
+from .generation_models import FullItinerary, ItineraryItem
 
 from typing import List
 
@@ -33,6 +33,7 @@ class Prompts:
 
     @staticmethod
     def get_group_prompt(group: str) -> str:
+
         """
         Get a prompt for the group type.
 
@@ -82,3 +83,11 @@ class Prompts:
                 itinerary_str += f"{key}: {value}\n"
             itinerary_str += "</Itinerary Item>\n"
         return itinerary_str
+
+    @staticmethod
+    def activity_to_string(activity: ItineraryItem) -> str:
+        activity_str = ""
+        json_item = activity.model_dump()
+        for key, value in json_item.items():
+            activity_str += f"{key}: {value}\n"
+        return activity_str
