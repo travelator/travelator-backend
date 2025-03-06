@@ -22,3 +22,12 @@ def swap_activity(
             break
 
     return itinerary
+
+
+def weather_to_str(weather) -> str:
+    if weather is None:
+        return None
+    return " ".join(
+        f"{entry['time']}: {entry['weather'].strip()} {entry['temperature']}°C"
+        for entry in weather
+    )

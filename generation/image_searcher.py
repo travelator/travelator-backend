@@ -12,7 +12,10 @@ async def get_n_random_places(titles):
     final_data = await search_duckduckgo_images(values, keys)
     return final_data
 
-def search_single_image(query: Optional[str], key: str) -> Tuple[str, Optional[List[str]]]:
+
+def search_single_image(
+    query: Optional[str], key: str
+) -> Tuple[str, Optional[List[str]]]:
     """
     Search for a single image and return (key, [url1, url2]).
 
