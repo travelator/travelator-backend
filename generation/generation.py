@@ -15,14 +15,13 @@ from .prompts import Prompts
 import os
 import requests
 from datetime import datetime
-from .utils import weather_to_str
 
 load_dotenv()
 
 
 class Generator:
     def __init__(self):
-        self.llm = ChatOpenAI(model="gpt-4o-mini")
+        self.llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
         self.weather_api_key = os.getenv("WEATHER_API_KEY", None)
         self.weather_url = "http://api.weatherapi.com/v1/forecast.json"
 

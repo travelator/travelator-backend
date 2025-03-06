@@ -71,7 +71,7 @@ async def get_activity_links(titles_set, location, try_again=True):
 
     user_input = (
         f"The user is planning an itinerary for a trip to {location}."
-        "Replace each value in this dictionary with a website link for the given activity if you can find it, and return only the dictionary with no other text as a string. "
+        "Replace each value in this dictionary with a website link for the given venue if you can find it, and return only the dictionary with no other text as a string. "
         + str(titles_set)
     )
     perplexity_output = await run_perplexity_query(perplexity_chain, user_input)

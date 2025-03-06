@@ -39,6 +39,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Install environment variables
+        run: |
+          echo "OPENAI_API_KEY=test" >> .env
       - name: Run tests with coverage
         run: pytest
 
