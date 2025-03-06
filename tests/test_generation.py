@@ -224,7 +224,7 @@ async def test_generate_activities():
     # Mocked response
     mock_response = ActivityTitles(
         activities=[
-            ActivityTitleStruct(id=1, title="Visit the British Museum"), 
+            ActivityTitleStruct(id=1, title="Visit the British Museum"),
             ActivityTitleStruct(id=2, title="Explore Tower of London"),
         ]
     )
@@ -234,7 +234,7 @@ async def test_generate_activities():
         result = await generator.generate_activities("London", titles_only=True)
 
         assert isinstance(result, list)
-        assert result[0].title == "Visit the British Museum"  
+        assert result[0].title == "Visit the British Museum"
 
 # Testing models
 def test_activity_model():
@@ -256,8 +256,8 @@ def test_itinerary_item_model():
         end="2025-03-04 10:15",
         description="Ride the London Underground to Oxford Circus.",
         price=2.5,
-        theme=Theme.ADVENTURE,  
-        transportMode=TransportMode.TUBE,  
+        theme=Theme.ADVENTURE,
+        transportMode=TransportMode.TUBE,
         requires_booking=False,
         booking_url="",
         image_link=["https://example.com/tube.jpg"],
@@ -440,12 +440,10 @@ async def test_generate_item_details():
         assert result.title == "Explore Covent Garden"
         assert result.theme == Theme.CULTURE
 
-
 def test_get_uniqueness_prompt():
     result = Prompts.get_uniqueness_prompt(2)  
-    assert isinstance(result, str)  
-    assert "off-the-beaten-path" in result.lower()  
-
+    assert isinstance(result, str)
+    assert "off-the-beaten-path" in result.lower()
 @pytest.mark.asyncio
 async def test_generate_facts():
     mock_response = Facts(facts=["London has the world's oldest underground railway."])
