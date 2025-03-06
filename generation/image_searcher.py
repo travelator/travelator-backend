@@ -3,7 +3,6 @@ from duckduckgo_search import DDGS
 from typing import Dict, List, Tuple, Optional, Any
 
 
-
 async def get_n_random_places(titles):
     # filter out items where value is empty
     filtered_titles = {k: v for k, v in titles.items() if v is not None and len(v) > 0}
