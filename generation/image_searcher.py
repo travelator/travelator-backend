@@ -1,5 +1,6 @@
-from duckduckgo_search import DDGS
 import asyncio
+from duckduckgo_search import DDGS
+from typing import Dict, List, Tuple, Optional, Any
 
 
 async def get_n_random_places(titles):
@@ -11,13 +12,41 @@ async def get_n_random_places(titles):
     final_data = await search_duckduckgo_images(values, keys)
     return final_data
 
+def search_single_image(query: Optional[str], key: str) -> Tuple[str, Optional[List[str]]]:
+    """
+    Search for a single image and return (key, [url1, url2]).
 
-def search_single_image(query, key):
-    with DDGS() as ddgs:
-        results = ddgs.images(query, max_results=2)
-        if results:
-            return key, [results[0]["image"], results[1]["image"]]
-        return key, None
+    Args:
+        query: The search query string
+        key: The key to associate with the result
+
+    Returns:
+        A tuple containing the key and a list of image URLs (or None if no results)
+    """
+    # Handle None or empty query
+    if not query:
+        return (key, None)
+
+    try:
+        with DDGS() as ddgs:
+            results = list(ddgs.images(query, max_results=2))
+
+            if not results:
+                return (key, None)
+
+            # Handle case where we get less than 2 images
+            urls = []
+            for result in results:
+                urls.append(result["image"])
+
+            # Make sure we have at least 2 URLs or pad with None
+            while len(urls) < 2:
+                urls.append(None)
+
+            return (key, urls)
+    except Exception as e:
+        print(f"Error searching for {query}: {e}")
+        raise
 
 
 async def search_duckduckgo_images(queries, keys):

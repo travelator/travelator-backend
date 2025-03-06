@@ -25,9 +25,9 @@ jsonpointer==3.0.0
 langchain==0.3.19
 langchain-community==0.3.18
 langchain-core==0.3.39
-langchain-openai==0.3.6
+langchain-openai==0.3.7
+langsmith  # Remove the version constraint
 langchain-text-splitters==0.3.6
-langsmith==0.3.10
 lxml==5.3.1
 marshmallow==3.26.1
 multidict==6.1.0
@@ -58,3 +58,4 @@ urllib3==2.3.0
 uvicorn==0.34.0
 yarl==1.18.3
 zstandard==0.23.0
+pytest==8.3.5

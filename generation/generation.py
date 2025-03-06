@@ -14,6 +14,7 @@ import asyncio
 from .prompts import Prompts
 import os
 import requests
+from datetime import datetime
 
 load_dotenv()
 
@@ -24,35 +25,85 @@ class Generator:
 
     # Fetch Live weather data
     @staticmethod
-    def get_weather(location):
+    def get_weather(location, date=None):
         """
-        Fetches current weather conditions for a given location using WeatherAPI.
+        Fetches hourly weather forecast for a given location and date using WeatherAPI.
+
+        Args:
+            location (str): The location to get weather for
+            date (str, optional): The date in YYYY-MM-DD format. Defaults to None (current day).
+
+        Returns:
+            list: List of dictionaries containing hourly weather data from 7am to midnight
+                  Each dict has keys: time (str), weather (str), temperature (int)
         """
         API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
         if not API_KEY:
             raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
-        url = "http://api.weatherapi.com/v1/current.json"
+
+        url = "http://api.weatherapi.com/v1/forecast.json"
+
+        # If a date is provided, we need to calculate days in the future
+        # WeatherAPI allows forecast up to 14 days
+        days_param = 1
+        if date:
+            # Calculate days difference between today and requested date
+            today = datetime.now().date()
+            requested_date = datetime.strptime(date, "%Y-%m-%d").date()
+            days_diff = (requested_date - today).days
+
+            # Ensure the requested date is within API limits (0-14 days)
+            if days_diff < 0:
+                return {"error": "Cannot retrieve weather for past dates"}
+            elif days_diff > 14:
+                return {"error": "Weather forecast is only available up to 14 days in the future"}
+            else:
+                days_param = days_diff + 1  # Need at least this many days to include the requested date
 
         params = {
             "key": API_KEY,
             "q": location,
-            "aqi": "no",  # Exclude air quality data for a faster response
+
+            "aqi": "no",
+            "days": days_param,
+            "hour": "0-23"  # Get all hours
         }
 
         response = requests.get(url, params=params)
         data = response.json()
 
-        if response.status_code != 200:
-            return {
-                "error": f"Weather API error: {data.get('error', {}).get('message', 'Unknown error')}"
-            }
+        if response.status_code != 200 or "forecast" not in data:
+            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unexpected API response')}"}
 
-        return {
-            "description": data["current"]["condition"]["text"],  # Weather description
-            "temperature": data["current"]["temp_c"],  # Temperature in Celsius
-            "rain": data["current"].get("precip_mm", 0),  # Rainfall in mm
-            "wind_speed": data["current"]["wind_kph"],  # Wind speed in km/h
-        }
+        # Get the forecast for the requested date (or today if no date)
+        target_date = date if date else datetime.now().strftime("%Y-%m-%d")
+
+        # Find the forecast for the target date
+        forecast_day = None
+        for day in data["forecast"]["forecastday"]:
+            if day["date"] == target_date:
+                forecast_day = day
+                break
+
+        if not forecast_day:
+            return {"error": f"Weather forecast for {target_date} not available"}
+
+        hourly_data = forecast_day["hour"]
+
+        # Filter hours between 7am and midnight
+        filtered_hours = []
+        for hour_entry in hourly_data:
+            hour_time_obj = datetime.strptime(hour_entry["time"], "%Y-%m-%d %H:%M")
+            hour = hour_time_obj.hour
+
+            if 7 <= hour <= 23:  # From 7am to midnight (23:00)
+                filtered_hours.append({
+                    "time": hour_time_obj.strftime("%H:%M"),  # Format as HH:MM
+                    "weather": hour_entry["condition"]["text"],
+                    "temperature": int(round(hour_entry["temp_c"]))  # Round to nearest integer
+                })
+
+        return filtered_hours
 
     # Generate activities
     async def generate_activities(
@@ -107,27 +158,25 @@ class Generator:
 
     # Generate itinerary item details
     def generate_itinerary(
-        self,
-        location,
-        timeOfDay,
-        group,
-        uniqueness,
-        preferences=None,
-        prior_itinerary=None,
-        feedback=None,
+            self,
+            location,
+            timeOfDay,
+            group,
+            uniqueness,
+            preferences=None,
+            prior_itinerary=None,
+            feedback=None,
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
-        # Fetch weather data
+        # Fetch hourly weather data
         weather_data = self.get_weather(location)
+
         if "error" in weather_data:
             weather_string = "Weather data is currently unavailable."
+            weather_data = {}  # Avoid breaking code later
         else:
-            weather_string = (
-                f"The current weather in {location} is {weather_data['description']} with a temperature of "
-                f"{weather_data['temperature']}°C. There is {weather_data['rain']}mm of rainfall and the wind speed is "
-                f"{weather_data['wind_speed']} km/h. Adjust outdoor activity recommendations accordingly."
-            )
+            weather_string = "Weather data is included per event."
 
         if preferences is not None:
             preference_string = (
@@ -157,7 +206,8 @@ class Generator:
                 f"The user wants an itinerary for these parts of the day: {', '.join(timeOfDay)}"
                 f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "You MUST include steps in the itinerary for travel between locations."
-                "Wherever possible, you must include specific venues (e.g. 'Dinner at the Grove' and not just 'Dinner at a local restaurant')"
+                "When suggesting restaurants, you MUST provide specific restaurant names, cuisine type, and a brief description."
+                "Example: Instead of 'Have a rooftop dinner,' say 'Enjoy an Italian fine dining experience at Aqua Shard, a rooftop restaurant with panoramic views of London.'"
                 "You must generate these travel steps as items in the itinerary so the user knows how to get between different events, and include start and end times for travel."
                 f"\n\n{weather_string}"
             ),
@@ -170,6 +220,27 @@ class Generator:
         ]
 
         response = structured_model.invoke(messages)
+
+        # **Integrate Weather Data into Itinerary Response**
+        for event in response.itinerary:
+            # Convert event time to nearest hour format: 'YYYY-MM-DD HH:00'
+            event_time_obj = datetime.strptime(event.start_time, "%Y-%m-%d %H:%M")
+            event_hour_str = event_time_obj.strftime("%Y-%m-%d %H:00")
+
+            weather_info = weather_data.get(event_hour_str, None)
+
+            if weather_info:
+                event.weather = {
+                    "icon": weather_info["icon"],  # Icon URL
+                    "description": weather_info["description"],  # Weather condition
+                    "temperature": weather_info["temperature"],  # Temperature
+                }
+            else:
+                event.weather = {
+                    "icon": None,
+                    "description": "Weather data unavailable",
+                    "temperature": None,
+                }
 
         return response
 
