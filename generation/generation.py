@@ -21,11 +21,12 @@ load_dotenv()
 
 class Generator:
     def __init__(self):
-        self.llm = ChatOpenAI(model="gpt-4o-mini")
+        self.llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
+        self.weather_api_key = os.getenv("WEATHER_API_KEY", None)
+        self.weather_url = "http://api.weatherapi.com/v1/forecast.json"
 
     # Fetch Live weather data
-    @staticmethod
-    def get_weather(location, date=None):
+    def get_weather(self, location, date=None):
         """
         Fetches hourly weather forecast for a given location and date using WeatherAPI.
 
@@ -37,56 +38,54 @@ class Generator:
             list: List of dictionaries containing hourly weather data from 7am to midnight
                   Each dict has keys: time (str), weather (str), temperature (int)
         """
-        API_KEY = os.getenv("WEATHERAPI_KEY")  # Load from .env
-        if not API_KEY:
-            raise ValueError("WEATHERAPI_KEY is missing from environment variables!")
+        if date is None:
+            return None
 
-        url = "http://api.weatherapi.com/v1/forecast.json"
+        if self.weather_api_key is None:
+            print(
+                "Weather API key not found. Please set the WEATHER_API_KEY environment variable."
+            )
+            return None
 
-        # If a date is provided, we need to calculate days in the future
+        # Calculate days difference between today and requested date
+        today = datetime.now().date()
+        requested_date = datetime.strptime(date, "%Y-%m-%d").date()
+        days_diff = (requested_date - today).days
+
+        # Ensure the requested date is within API limits (0-14 days)
+        if days_diff < 0:
+            print("Cannot retrieve weather for past dates")
+            return None
+        elif days_diff > 14:
+            return None
+
         # WeatherAPI allows forecast up to 14 days
-        days_param = 1
-        if date:
-            # Calculate days difference between today and requested date
-            today = datetime.now().date()
-            requested_date = datetime.strptime(date, "%Y-%m-%d").date()
-            days_diff = (requested_date - today).days
-
-            # Ensure the requested date is within API limits (0-14 days)
-            if days_diff < 0:
-                return {"error": "Cannot retrieve weather for past dates"}
-            elif days_diff > 14:
-                return {"error": "Weather forecast is only available up to 14 days in the future"}
-            else:
-                days_param = days_diff + 1  # Need at least this many days to include the requested date
+        days_param = days_diff + 1
 
         params = {
-            "key": API_KEY,
+            "key": self.weather_api_key,
             "q": location,
-
             "aqi": "no",
             "days": days_param,
-            "hour": "0-23"  # Get all hours
+            "hour": "0-23",  # Get all hours
         }
 
-        response = requests.get(url, params=params)
+        response = requests.get(self.weather_url, params=params)
         data = response.json()
 
         if response.status_code != 200 or "forecast" not in data:
-            return {"error": f"Weather API error: {data.get('error', {}).get('message', 'Unexpected API response')}"}
-
-        # Get the forecast for the requested date (or today if no date)
-        target_date = date if date else datetime.now().strftime("%Y-%m-%d")
+            print("Error fetching weather information")
+            return None
 
         # Find the forecast for the target date
         forecast_day = None
         for day in data["forecast"]["forecastday"]:
-            if day["date"] == target_date:
+            if day["date"] == date:
                 forecast_day = day
                 break
 
         if not forecast_day:
-            return {"error": f"Weather forecast for {target_date} not available"}
+            return None
 
         hourly_data = forecast_day["hour"]
 
@@ -97,11 +96,15 @@ class Generator:
             hour = hour_time_obj.hour
 
             if 7 <= hour <= 23:  # From 7am to midnight (23:00)
-                filtered_hours.append({
-                    "time": hour_time_obj.strftime("%H:%M"),  # Format as HH:MM
-                    "weather": hour_entry["condition"]["text"],
-                    "temperature": int(round(hour_entry["temp_c"]))  # Round to nearest integer
-                })
+                filtered_hours.append(
+                    {
+                        "time": hour_time_obj.strftime("%H:%M"),  # Format as HH:MM
+                        "weather": hour_entry["condition"]["text"],
+                        "temperature": int(
+                            round(hour_entry["temp_c"])
+                        ),  # Round to nearest integer
+                    }
+                )
 
         return filtered_hours
 
@@ -158,25 +161,23 @@ class Generator:
 
     # Generate itinerary item details
     def generate_itinerary(
-            self,
-            location,
-            timeOfDay,
-            group,
-            uniqueness,
-            preferences=None,
-            prior_itinerary=None,
-            feedback=None,
+        self,
+        location,
+        timeOfDay,
+        group,
+        uniqueness,
+        preferences=None,
+        prior_itinerary=None,
+        feedback=None,
+        weather=None,
     ):
         structured_model = self.llm.with_structured_output(ItinerarySummary)
 
-        # Fetch hourly weather data
-        weather_data = self.get_weather(location)
-
-        if "error" in weather_data:
-            weather_string = "Weather data is currently unavailable."
-            weather_data = {}  # Avoid breaking code later
+        if weather is not None:
+            # Fetch hourly weather data
+            weather_string = f"Consider the following weather information available for the day in formulating the itinerary: ${weather}"
         else:
-            weather_string = "Weather data is included per event."
+            weather_string = ""
 
         if preferences is not None:
             preference_string = (
@@ -221,27 +222,6 @@ class Generator:
 
         response = structured_model.invoke(messages)
 
-        # **Integrate Weather Data into Itinerary Response**
-        for event in response.itinerary:
-            # Convert event time to nearest hour format: 'YYYY-MM-DD HH:00'
-            event_time_obj = datetime.strptime(event.start_time, "%Y-%m-%d %H:%M")
-            event_hour_str = event_time_obj.strftime("%Y-%m-%d %H:00")
-
-            weather_info = weather_data.get(event_hour_str, None)
-
-            if weather_info:
-                event.weather = {
-                    "icon": weather_info["icon"],  # Icon URL
-                    "description": weather_info["description"],  # Weather condition
-                    "temperature": weather_info["temperature"],  # Temperature
-                }
-            else:
-                event.weather = {
-                    "icon": None,
-                    "description": "Weather data unavailable",
-                    "temperature": None,
-                }
-
         return response
 
     # Generate details for all items asynchronously
@@ -250,9 +230,16 @@ class Generator:
         itineraryItem: SimpleItineraryItem,
         location: str,
         group: str,
+        weather: str = None,
     ) -> ItineraryItem:
         # set model
         structured_model = self.llm.with_structured_output(ItineraryItem)
+
+        if weather is not None:
+            # Fetch hourly weather data
+            weather_string = f"Consider the following weather information available for the day in formulating the itinerary: ${weather}"
+        else:
+            weather_string = ""
 
         # set prompting messages
         messages = [
@@ -261,6 +248,7 @@ class Generator:
                 "Your writing style should match a travel blogger, it should be casual."
                 "You must provide full details in the schema requested for the given activity."
                 f"Bear in mind the user is travelling {Prompts.get_group_prompt(group)}"
+                f"\n\n{weather_string}"
             ),
             HumanMessage(
                 f"Generate full details for the following activity: {itineraryItem.title}"
@@ -274,12 +262,12 @@ class Generator:
         return response.model_dump()
 
     async def generate_itinerary_details(
-        self, itinerary: ItinerarySummary, location: str, group: str
+        self, itinerary: ItinerarySummary, location: str, group: str, weather: str
     ):
         # create tasks for each item
         itinerary_items = itinerary.itinerary
         tasks = [
-            self.generate_item_details(item, location, group)
+            self.generate_item_details(item, location, group, weather)
             for item in itinerary_items
         ]
         responses = await asyncio.gather(*tasks)

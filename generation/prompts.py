@@ -23,17 +23,18 @@ class Prompts:
             1: "They've visited before, but still want to see some popular spots along with some less touristy options.",
             2: "They've been a few times and want to experience more off-the-beaten-path locations.",
             3: "They know the place well and want to focus on hidden gems and local experiences.",
-            4: "They want to completely live like a local, avoiding tourist areas entirely."
+            4: "They want to completely live like a local, avoiding tourist areas entirely.",
         }
 
         if uniqueness not in prompts:
-            raise ValueError(f"Invalid uniqueness value: {uniqueness}. Expected values between 0-4.")
+            raise ValueError(
+                f"Invalid uniqueness value: {uniqueness}. Expected values between 0-4."
+            )
 
         return prompts[uniqueness]
 
     @staticmethod
     def get_group_prompt(group: str) -> str:
-
         """
         Get a prompt for the group type.
 
@@ -47,7 +48,7 @@ class Prompts:
             "solo": "alone",
             "couples": "as a couple with their partner",
             "family": "with family",
-            "friends": "with friends"
+            "friends": "with friends",
         }
 
         return prompts.get(group, "with their group")

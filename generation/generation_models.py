@@ -87,10 +87,10 @@ class ItineraryItem(BaseModel):
         description="URL for booking the itinerary item."
     )
     weather: Optional[str] = Field(
-        description="weather conditions for the given activity. Do not generate."
+        description="weather conditions for the given activity. Generate ONLY if you are given conditions in context that match with the time of this activity. Must be either blank, or exactly match one of the following categories: sunny, cloudy with sun, cloudy, rainy, snowy"
     )
     temperature: Optional[int] = Field(
-        description="temperature in celsius for the given activity. Do not generate."
+        description="temperature in celsius for the given activity. Generate ONLY if you are given conditions in context that match with the time of this activity. Must be either blank, or or match the number that was given in context for the given start time."
     )
     image_link: List[str] = Field(
         description="URLs of images representing the activity. Do not generate."
