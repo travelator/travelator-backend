@@ -23,7 +23,8 @@ async def swap(request: SwapRequest, searchConfig: str = Cookie(None)):
     # Look for cookie data on search parameters
     try:
         cookie_data = json.loads(searchConfig)
-    except json.JSONDecodeError:
+    except Exception:
+        print("No cookie data found")
         cookie_data = {}
 
     group = cookie_data.get("group", None)
