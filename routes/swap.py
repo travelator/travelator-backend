@@ -4,6 +4,7 @@ from generation.generation import Generator
 from generation.utils import get_activity_from_id, swap_activity
 from generation.image_searcher import get_n_random_places
 from generation.activity_links import get_activity_links
+from generation.utils import weather_to_str
 import json
 import asyncio
 
@@ -27,9 +28,13 @@ async def swap(request: SwapRequest, searchConfig: str = Cookie(None)):
 
     group = cookie_data.get("group", None)
     uni = cookie_data.get("uniqueness", None)
+    date = cookie_data.get("date", None)
 
     # get activity from itinerary
     activity = get_activity_from_id(itinerary, activityId)
+
+    # Get weather before generating activity
+    weather = weather_to_str(generator.get_weather(city, date))
 
     # get new activity
     new_activity = await generator.swap_activity(
@@ -39,6 +44,7 @@ async def swap(request: SwapRequest, searchConfig: str = Cookie(None)):
         uniqueness=uni,
         itinerary=itinerary,
         feedback=feedback,
+        weather=weather,
     )
 
     # get image for new activity

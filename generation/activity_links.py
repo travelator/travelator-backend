@@ -92,6 +92,9 @@ async def get_activity_links(titles_set, location, try_again=True):
                 return None
     except (ValueError, SyntaxError):
         # If there's an error during evaluation, return None
+        if try_again:
+            # If it fails the first time, try again
+            return await get_activity_links(titles_set, location, try_again=False)
         return None
 
 

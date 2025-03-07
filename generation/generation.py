@@ -118,7 +118,7 @@ class Generator:
         timeOfDay=None,
         group=None,
     ):
-        num_activities = 8
+        num_activities = 6
 
         if titles_only:
             structured_model = self.llm.with_structured_output(ActivityTitles)
@@ -281,9 +281,16 @@ class Generator:
         uniqueness: int,
         itinerary: FullItinerary,
         feedback: str,
+        weather: str = None,
     ) -> ItineraryItem:
         # set model
         structured_model = self.llm.with_structured_output(ItineraryItem)
+
+        if weather is not None:
+            # Fetch hourly weather data
+            weather_string = f"Consider the following weather information available for the day in formulating the itinerary: ${weather}"
+        else:
+            weather_string = ""
 
         prior_itinerary_str = (
             f"The user is planning has been shown the following itinerary:\n{Prompts.itinerary_to_string(itinerary)}"
@@ -302,6 +309,7 @@ class Generator:
                 f"{Prompts.get_uniqueness_prompt(uniqueness)}"
                 "Provide your response as a new activity with the same timings."
                 f"Above all, you must make sure your response takes into account the following user feedback: {feedback}."
+                f"\n\n{weather_string}"
             ),
             SystemMessage(prior_itinerary_str),
             HumanMessage(
