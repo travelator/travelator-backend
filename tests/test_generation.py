@@ -108,7 +108,7 @@ async def test_generate_itinerary():
     )
 
     with patch.object(generator, "generate_itinerary", return_value=mock_response):
-        result = generator.generate_itinerary(
+        result = await generator.generate_itinerary(
             location="London", timeOfDay=["morning"], group="solo", uniqueness="niche"
         )
 
@@ -348,7 +348,7 @@ async def test_generate_itinerary_with_variations():
 
     for scenario in scenarios:
         with patch.object(generator, "generate_itinerary", return_value=mock_response):
-            result = generator.generate_itinerary(
+            result = await generator.generate_itinerary(
                 location="London",
                 timeOfDay=scenario["timeOfDay"],
                 group=scenario["group"],
