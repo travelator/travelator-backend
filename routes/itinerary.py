@@ -23,6 +23,7 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     try:
         cookie_data = json.loads(searchConfig)
     except Exception:
+        print("No cookie data found")
         cookie_data = {}
 
     timeOfDay = cookie_data.get("timeOfDay", None)

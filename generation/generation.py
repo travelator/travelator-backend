@@ -118,7 +118,7 @@ class Generator:
         timeOfDay=None,
         group=None,
     ):
-        num_activities = 5
+        num_activities = 8
 
         if titles_only:
             structured_model = self.llm.with_structured_output(ActivityTitles)
