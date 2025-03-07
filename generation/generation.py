@@ -24,6 +24,7 @@ class Generator:
         self.llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
         self.weather_api_key = os.getenv("WEATHER_API_KEY", None)
         self.weather_url = "http://api.weatherapi.com/v1/forecast.json"
+        self.num_retries = 3
 
     # Fetch Live weather data
     def get_weather(self, location, date=None):
@@ -108,6 +109,15 @@ class Generator:
 
         return filtered_hours
 
+    async def invoke_with_retries(self, mdl, messages, retries):
+        try:
+            return await mdl.ainvoke(messages)
+        except Exception as e:
+            if retries > 1:
+                print(f"Error invoking model: {e}. Retries left: {retries - 1}")
+                return await self.invoke_with_retries(messages, retries - 1)
+            raise  # Let the last failure propagate
+
     # Generate activities
     async def generate_activities(
         self,
@@ -155,12 +165,14 @@ class Generator:
             HumanMessage(human_prompt),
         ]
 
-        response = await structured_model.ainvoke(messages)
+        response = await self.invoke_with_retries(
+            structured_model, messages, self.num_retries
+        )
 
         return response.model_dump()["activities"]
 
     # Generate itinerary item details
-    def generate_itinerary(
+    async def generate_itinerary(
         self,
         location,
         timeOfDay=None,
@@ -223,7 +235,9 @@ class Generator:
             ),
         ]
 
-        response = structured_model.invoke(messages)
+        response = await self.invoke_with_retries(
+            structured_model, messages, self.num_retries
+        )
 
         return response
 
@@ -260,7 +274,9 @@ class Generator:
             ),
         ]
 
-        response = await structured_model.ainvoke(messages)
+        response = await self.invoke_with_retries(
+            structured_model, messages, self.num_retries
+        )
 
         return response.model_dump()
 
@@ -320,7 +336,9 @@ class Generator:
             ),
         ]
 
-        response = await structured_model.ainvoke(messages)
+        response = await self.invoke_with_retries(
+            structured_model, messages, self.num_retries
+        )
         return response
 
     async def generate_facts(self, location: str, num: int = 1):
@@ -342,18 +360,8 @@ class Generator:
             ),
         ]
 
-        response = await structured_model.ainvoke(messages)
+        response = await self.invoke_with_retries(
+            structured_model, messages, self.num_retries
+        )
 
         return response.facts
-
-
-"""async def main():
-    start = time.time()
-
-    generator = Generator()
-
-    print(await generator.generate_facts("London", num=3))
-
-    print(f"Model took {time.time() - start} seconds to run.")
-
-asyncio.run(main())"""

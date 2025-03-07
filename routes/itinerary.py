@@ -35,7 +35,7 @@ async def get_itinerary(request: ItineraryRequest, searchConfig: str = Cookie(No
     weather = weather_to_str(generator.get_weather(city, date))
 
     # Get itinerary response and titles
-    itinerary_response = generator.generate_itinerary(
+    itinerary_response = await generator.generate_itinerary(
         city,
         timeOfDay,
         group,

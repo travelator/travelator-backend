@@ -1,6 +1,6 @@
 import asyncio
 from duckduckgo_search import DDGS
-from typing import Dict, List, Tuple, Optional, Any
+from typing import List, Tuple, Optional
 
 
 async def get_n_random_places(titles):
