@@ -163,9 +163,9 @@ class Generator:
     def generate_itinerary(
         self,
         location,
-        timeOfDay,
-        group,
-        uniqueness,
+        timeOfDay=None,
+        group=None,
+        uniqueness=None,
         preferences=None,
         prior_itinerary=None,
         feedback=None,
@@ -197,6 +197,9 @@ class Generator:
 
         else:
             prior_itinerary_str = ""
+
+        if timeOfDay is None:
+            timeOfDay = ["morning", "afternoon", "evening"]
 
         # set prompting messages
         messages = [

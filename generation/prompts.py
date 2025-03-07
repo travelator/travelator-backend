@@ -18,6 +18,9 @@ class Prompts:
         Raises:
             ValueError: If the uniqueness value is outside the valid range (0-4)
         """
+        if uniqueness is None:
+            return ""
+
         prompts = {
             0: "This is their first time visiting, so they want to see all the classic tourist attractions and main sights.",
             1: "They've visited before, but still want to see some popular spots along with some less touristy options.",
@@ -25,11 +28,6 @@ class Prompts:
             3: "They know the place well and want to focus on hidden gems and local experiences.",
             4: "They want to completely live like a local, avoiding tourist areas entirely.",
         }
-
-        if uniqueness not in prompts:
-            raise ValueError(
-                f"Invalid uniqueness value: {uniqueness}. Expected values between 0-4."
-            )
 
         return prompts[uniqueness]
 
@@ -44,6 +42,9 @@ class Prompts:
         Returns:
             A string prompt describing the group
         """
+        if group is None:
+            return "."
+
         prompts = {
             "solo": "alone",
             "couples": "as a couple with their partner",
